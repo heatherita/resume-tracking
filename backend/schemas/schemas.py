@@ -58,7 +58,7 @@ class RoleUpdate(BaseModel):
 class Role(RoleBase):
     id: int
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -93,7 +93,7 @@ class ArtifactMetric(ArtifactMetricBase):
     id: int
     artifact_id: int
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -124,7 +124,7 @@ class Artifact(ArtifactBase):
     id: int
     created: datetime
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
     metrics: List[ArtifactMetric] = []
 
     class Config:
@@ -167,7 +167,7 @@ class JobUpdate(BaseModel):
 class Job(JobBase):
     id: int
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -205,7 +205,7 @@ class ApplicationUpdate(BaseModel):
 class Application(ApplicationBase):
     id: int
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True

@@ -89,7 +89,7 @@ class Application(Base):
 
     # Relationships
     job = relationship("Job", back_populates="applications")
-    artifacts = relationship("Artifact", back_populates="application", secondary="application_artifacts")
+    artifacts = relationship("Artifact", back_populates="applications", secondary="application_artifacts")
 
 
 class Artifact(Base):
