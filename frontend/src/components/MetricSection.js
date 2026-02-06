@@ -8,12 +8,29 @@ const FONT_OPTIONS = [
   { value: '10pt', label: '10pt' },
 ];
 
+const LEVEL_OPTIONS = [
+  { value: '', label: 'None' },
+  { value: 'low', label: 'Low' },
+  { value: 'med', label: 'Medium' },
+  { value: 'high', label: 'High' },
+];
+
+const FORMAT_OPTIONS = [
+  { value: '', label: 'None' },
+  { value: 'two-column', label: 'Two-Column' },
+  { value: 'colors_used', label: 'Colors Used' },
+  { value: 'headshot_used', label: 'Headshot Used' },
+  { value: 'serif_font', label: 'Serif Font' },
+];
+
 const initialForm = {
   artifact_id: '',
   name: '',
   notes: '',
   active: true,
   ai_generated: false,
+  truth_level: '',
+  prompt_strictness: '',
   bullet_points: false,
   artifact_format_details: '',
   font_size: '',
@@ -70,6 +87,8 @@ function MetricSection() {
       notes: metric.notes || '',
       active: Boolean(metric.active),
       ai_generated: Boolean(metric.ai_generated),
+      truth_level: metric.truth_level || '',
+      prompt_strictness: metric.prompt_strictness || '',
       bullet_points: Boolean(metric.bullet_points),
       artifact_format_details: metric.artifact_format_details || '',
       font_size: metric.font_size || '',
@@ -89,6 +108,8 @@ function MetricSection() {
       notes: formData.notes || null,
       active: Boolean(formData.active),
       ai_generated: Boolean(formData.ai_generated),
+      truth_level: formData.truth_level || null,
+      prompt_strictness: formData.prompt_strictness || null,
       bullet_points: formData.bullet_points === '' ? null : Boolean(formData.bullet_points),
       artifact_format_details: formData.artifact_format_details || null,
       font_size: formData.font_size || null,
@@ -174,6 +195,26 @@ function MetricSection() {
             />
             AI Generated
           </label>
+          <label>
+            Truth Level
+            <select name="truth_level" value={formData.truth_level} onChange={handleChange}>
+              {LEVEL_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Prompt Strictness
+            <select name="prompt_strictness" value={formData.prompt_strictness} onChange={handleChange}>
+              {LEVEL_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
           <label className="checkbox">
             <input
               type="checkbox"
@@ -185,11 +226,17 @@ function MetricSection() {
           </label>
           <label>
             Format Details
-            <input
+            <select
               name="artifact_format_details"
               value={formData.artifact_format_details}
               onChange={handleChange}
-            />
+            >
+              {FORMAT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
             Font Size
@@ -226,6 +273,8 @@ function MetricSection() {
                   <th>Name</th>
                   <th>Active</th>
                   <th>AI</th>
+                  <th>Truth</th>
+                  <th>Strictness</th>
                   <th>Bullets</th>
                   <th>Font</th>
                   <th>Created</th>
@@ -239,6 +288,8 @@ function MetricSection() {
                     <td>{metric.name}</td>
                     <td>{metric.active ? 'Yes' : 'No'}</td>
                     <td>{metric.ai_generated ? 'Yes' : 'No'}</td>
+                    <td>{metric.truth_level || '-'}</td>
+                    <td>{metric.prompt_strictness || '-'}</td>
                     <td>{metric.bullet_points ? 'Yes' : 'No'}</td>
                     <td>{metric.font_size || '-'}</td>
                     <td>{formatDateTime(metric.created_at)}</td>

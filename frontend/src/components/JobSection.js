@@ -156,7 +156,6 @@ function JobSection() {
               name="date_found"
               value={formData.date_found}
               onChange={handleChange}
-              required
             />
           </label>
           <label>

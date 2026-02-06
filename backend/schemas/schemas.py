@@ -30,12 +30,28 @@ class ApplicationResponseEnum(str, Enum):
     interview = "interview"
     offer = "offer"
 
+class TruthLevelEnum(str, Enum):
+    low = "low"
+    med = "med"
+    high = "high"
 
+
+class PromptStrictnessEnum(str, Enum):
+    low = "low"
+    med = "med"
+    high = "high"
 
 
 class FontSizeEnum(str, Enum):
     size_12pt = "12pt"
     size_10pt = "10pt"
+
+
+class ArtifactFormatDetailsEnum(str, Enum):
+    two_column = "two-column"
+    colors_used = "colors_used"
+    headshot_used = "headshot_used"
+    serif_font = "serif_font"
 
 
 # Role Schemas
@@ -70,8 +86,10 @@ class ArtifactMetricBase(BaseModel):
     notes: Optional[str] = None
     active: bool = True
     ai_generated: bool = False   
+    truth_level: Optional[TruthLevelEnum] = None
+    prompt_strictness: Optional[PromptStrictnessEnum] = None
     bullet_points: Optional[bool] = None
-    artifact_format_details: Optional[str] = None
+    artifact_format_details: Optional[ArtifactFormatDetailsEnum] = None
     font_size: Optional[FontSizeEnum] = None
 
 
@@ -83,9 +101,11 @@ class ArtifactMetricUpdate(BaseModel):
     name: Optional[str] = None
     notes: Optional[str] = None
     active: Optional[bool] = None
-    ai_generated: Optional[bool] = None    
+    ai_generated: Optional[bool] = None 
+    truth_level: Optional[TruthLevelEnum] = None
+    prompt_strictness: Optional[PromptStrictnessEnum] = None   
     bullet_points: Optional[bool] = None
-    artifact_format_details: Optional[str] = None
+    artifact_format_details: Optional[ArtifactFormatDetailsEnum] = None
     font_size: Optional[FontSizeEnum] = None
 
 
@@ -122,7 +142,7 @@ class ArtifactUpdate(BaseModel):
 
 class Artifact(ArtifactBase):
     id: int
-    created: datetime
+    created: Optional[datetime] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
     metrics: List[ArtifactMetric] = []
@@ -141,7 +161,7 @@ class JobBase(BaseModel):
     title: str
     posting_url: Optional[str] = None
     required_skills: Optional[str] = None
-    date_found: datetime
+    date_found: Optional[datetime] = None
     status: JobStatusEnum = JobStatusEnum.interested
     fit_score: Optional[int] = None
     notes: Optional[str] = None
@@ -180,7 +200,7 @@ class JobWithApplications(Job):
 # Application Schemas
 class ApplicationBase(BaseModel):
     job_id: int
-    date_sent: datetime
+    date_sent: Optional[datetime] = None
     contact: Optional[str] = None
     response: Optional[ApplicationResponseEnum] = None
     next_action_date: Optional[date] = None

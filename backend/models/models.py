@@ -31,7 +31,16 @@ class ApplicationResponseEnum(str, enum.Enum):
     interview = "interview"
     offer = "offer"
 
+class TruthLevelEnum(str, enum.Enum):
+    low = "low"
+    med = "med"
+    high = "high"
 
+
+class PromptStrictnessEnum(str, enum.Enum):
+    low = "low"
+    med = "med"
+    high = "high"
 
 class FontSizeEnum(str, enum.Enum):
     size_12pt = "12pt"
@@ -46,7 +55,7 @@ class Role(Base):
     core_skills = Column(Text, nullable=False)
     notes = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
     jobs = relationship("Job", back_populates="role")
@@ -60,13 +69,13 @@ class Job(Base):
     title = Column(String, nullable=False)
     posting_url = Column(String)
     required_skills = Column(Text)
-    date_found = Column(DateTime(timezone=True), nullable=False)
+    date_found = Column(Date)
     status = Column(Enum(JobStatusEnum), nullable=False, default=JobStatusEnum.interested)
     fit_score = Column(Integer)
     notes = Column(Text)
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
     role = relationship("Role", back_populates="jobs")
@@ -78,14 +87,14 @@ class Application(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     job_id = Column(Integer, ForeignKey("jobs.id"), nullable=False)
-    date_sent = Column(DateTime(timezone=True), nullable=False)
+    date_sent = Column(DateTime)
     contact = Column(String)
     response = Column(Enum(ApplicationResponseEnum))
     next_action_date = Column(Date)
     notes = Column(Text)
     active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
     job = relationship("Job", back_populates="applications")
@@ -103,7 +112,7 @@ class Artifact(Base):
     notes = Column(Text)
     active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
     metrics = relationship("ArtifactMetric", back_populates="artifact", cascade="all, delete-orphan")
@@ -118,12 +127,14 @@ class ArtifactMetric(Base):
     name = Column(String, nullable=False)
     notes = Column(Text)
     active = Column(Boolean, default=True)
+    truth_level = Column(Enum(TruthLevelEnum), info="Level of outright bending the truth found intruth the artifact")
+    prompt_strictness = Column(Enum(PromptStrictnessEnum), info="Level of strictness in the task prompt in adhering to source documents")
     ai_generated = Column(Boolean, default=False)
     bullet_points = Column(Boolean, info="Whether the artifact contains bullet points for experiences")
     artifact_format_details = Column(String, info="Format details: two-column/colors_used/headshot_used/serif_font")
     font_size = Column(Enum(FontSizeEnum))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
     artifact = relationship("Artifact", back_populates="metrics")

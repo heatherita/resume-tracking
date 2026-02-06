@@ -140,7 +140,6 @@ function ApplicationSection() {
               name="date_sent"
               value={formData.date_sent}
               onChange={handleChange}
-              required
             />
           </label>
           <label>
