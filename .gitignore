@@ -1,6 +1,7 @@
 /.venv
 /frontend/node_modules
 **/*.pyc
+/*.env
 **/*.env.*
 !.gitignore
 
