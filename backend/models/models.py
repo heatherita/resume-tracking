@@ -87,7 +87,7 @@ class Application(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     job_id = Column(Integer, ForeignKey("jobs.id"), nullable=False)
-    date_sent = Column(DateTime)
+    date_sent = Column(Date)
     contact = Column(String)
     response = Column(Enum(ApplicationResponseEnum))
     next_action_date = Column(Date)

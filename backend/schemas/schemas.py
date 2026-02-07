@@ -161,7 +161,7 @@ class JobBase(BaseModel):
     title: str
     posting_url: Optional[str] = None
     required_skills: Optional[str] = None
-    date_found: Optional[datetime] = None
+    date_found: Optional[date] = None
     status: JobStatusEnum = JobStatusEnum.interested
     fit_score: Optional[int] = None
     notes: Optional[str] = None
@@ -177,7 +177,7 @@ class JobUpdate(BaseModel):
     title: Optional[str] = None
     posting_url: Optional[str] = None
     required_skills: Optional[str] = None
-    date_found: Optional[datetime] = None
+    date_found: Optional[date] = None
     status: Optional[JobStatusEnum] = None
     fit_score: Optional[int] = None
     notes: Optional[str] = None
@@ -200,7 +200,7 @@ class JobWithApplications(Job):
 # Application Schemas
 class ApplicationBase(BaseModel):
     job_id: int
-    date_sent: Optional[datetime] = None
+    date_sent: Optional[date] = None
     contact: Optional[str] = None
     response: Optional[ApplicationResponseEnum] = None
     next_action_date: Optional[date] = None
@@ -214,7 +214,7 @@ class ApplicationCreate(ApplicationBase):
 
 class ApplicationUpdate(BaseModel):
     job_id: Optional[int] = None
-    date_sent: Optional[datetime] = None
+    date_sent: Optional[date] = None
     contact: Optional[str] = None
     response: Optional[ApplicationResponseEnum] = None
     next_action_date: Optional[date] = None

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createApplication, deleteApplication, listApplications, updateApplication } from '../api/applications';
-import { formatDate, formatDateTime, toInputDate, toInputDateTime } from './dateUtils';
+import { formatDate, toInputDate } from './dateUtils';
 
 const RESPONSE_OPTIONS = [
   { value: '', label: 'None' },
@@ -62,7 +62,7 @@ function ApplicationSection() {
     setEditingId(application.id);
     setFormData({
       job_id: application.job_id ?? '',
-      date_sent: toInputDateTime(application.date_sent),
+      date_sent: toInputDate(application.date_sent),
       contact: application.contact || '',
       response: application.response || '',
       next_action_date: toInputDate(application.next_action_date),
@@ -136,7 +136,7 @@ function ApplicationSection() {
           <label>
             Date Sent
             <input
-              type="datetime-local"
+              type="date-local"
               name="date_sent"
               value={formData.date_sent}
               onChange={handleChange}
@@ -210,7 +210,7 @@ function ApplicationSection() {
                     <td>{application.job_id}</td>
                     <td>{application.response || '-'}</td>
                     <td>{application.active ? 'Yes' : 'No'}</td>
-                    <td>{formatDateTime(application.date_sent)}</td>
+                    <td>{formatDate(application.date_sent)}</td>
                     <td>{formatDate(application.next_action_date)}</td>
                     <td className="row-actions">
                       <button type="button" className="ghost" onClick={() => handleEdit(application)}>

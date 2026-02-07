@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createJob, deleteJob, listJobs, updateJob } from '../api/jobs';
-import { formatDateTime, toInputDateTime } from './dateUtils';
+import { formatDate, toInputDate } from './dateUtils';
 
 const STATUS_OPTIONS = [
   { value: 'interested', label: 'Interested' },
@@ -67,7 +67,7 @@ function JobSection() {
       title: job.title || '',
       posting_url: job.posting_url || '',
       required_skills: job.required_skills || '',
-      date_found: toInputDateTime(job.date_found),
+      date_found: toInputDate(job.date_found),
       status: job.status || 'interested',
       fit_score: job.fit_score ?? '',
       notes: job.notes || '',
@@ -152,7 +152,7 @@ function JobSection() {
           <label>
             Date Found
             <input
-              type="datetime-local"
+              type="date-local"
               name="date_found"
               value={formData.date_found}
               onChange={handleChange}
@@ -232,7 +232,7 @@ function JobSection() {
                     <td>{job.title}</td>
                     <td>{job.status}</td>
                     <td>{job.role_id}</td>
-                    <td>{formatDateTime(job.date_found)}</td>
+                    <td>{formatDate(job.date_found)}</td>
                     <td className="row-actions">
                       <button type="button" className="ghost" onClick={() => handleEdit(job)}>
                         Edit
