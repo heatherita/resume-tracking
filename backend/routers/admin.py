@@ -1,4 +1,5 @@
 from typing import List, Optional
+from services.database_service import get_target_order
 from database import get_db
 from models.models import Role, Job, Application, Artifact, ArtifactMetric, Section, artifact_sections
 from schemas.schemas import (
@@ -283,11 +284,7 @@ async def create_section_for_artifact(
     db.add(db_section)
     db.flush()
 
-    max_order = db.execute(
-        select(func.max(artifact_sections.c.section_order)).where(artifact_sections.c.artifact_id == artifact_id)
-    ).scalar_one_or_none()
-    next_order = (max_order or 0) + 1
-    target_order = next_order
+    target_order = get_target_order(artifact_id, db)
     db.execute(
         artifact_sections.insert().values(
             artifact_id=artifact_id,
@@ -330,11 +327,8 @@ async def attach_section_to_artifact(
     if existing:
         return {"message": "Section already attached to artifact"}
 
-    max_order = db.execute(
-        select(func.max(artifact_sections.c.section_order)).where(artifact_sections.c.artifact_id == artifact_id)
-    ).scalar_one_or_none()
-    next_order = (max_order or 0) + 1
-    target_order = attach.section_order if attach and attach.section_order else next_order
+    db_target_order = get_target_order(artifact_id, db) 
+    target_order = attach.section_order if attach and attach.section_order else db_target_order
     db.execute(
         artifact_sections.insert().values(
             artifact_id=artifact_id,
