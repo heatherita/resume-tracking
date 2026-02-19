@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any
 import config
 from config.settings import BASE_STORAGE_PATH
-from services.resume_service import build_md, load_yaml
+from services.resume_service import build_md, create_odt_from_md, load_yaml
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -21,4 +21,7 @@ def create_markdown_resume(resume_data: dict[str, Any]):
     resume_path = Path(BASE_STORAGE_PATH) / "resume.md"
     resume_path.write_text(md, encoding="utf-8")
 
+@router.post("/resume/create/odt")
+def create_odt_resume():
+    create_odt_from_md()
 

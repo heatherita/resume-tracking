@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import argparse
+import shutil
+import subprocess
 import logging
 from dataclasses import dataclass
 from pathlib import Path
@@ -9,7 +11,7 @@ from typing import Any, Iterable
 
 import psycopg2
 import yaml
-# import yaml
+from config.settings import BASE_STORAGE_PATH
 
 logger = logging.getLogger("jobtelem")
 
@@ -236,6 +238,21 @@ def build_md(data: dict[str, Any], include: set[str], exclude: set[str], mode: s
         render_education(data),
     ]
     return "\n".join([p for p in parts if p]).strip() + "\n"
+
+
+def create_odt_from_md():
+    md_path = Path(BASE_STORAGE_PATH) / "resume.md"
+    odt_path = Path(BASE_STORAGE_PATH) / "resume.odt"
+    cmd = [
+    "pandoc",
+    "--reference-doc=../config/custom-reference.odt",
+    "-t","odt",
+    md_path,
+    "-o", "resume.teacher.odt",
+    odt_path,
+    ]    
+    subprocess.run(cmd, check=True)
+            
 
     # def connect_db():
     #     conn = connect(
