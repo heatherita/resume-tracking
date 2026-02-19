@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createArtifact, deleteArtifact, listArtifacts, updateArtifact } from '../api/artifacts';
+import { listApplications } from '../api/applications';
 import { formatDateTime } from './dateUtils';
 
 const TYPE_OPTIONS = [
@@ -20,6 +21,7 @@ const initialForm = {
 function ArtifactSection() {
   const [artifacts, setArtifacts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [applications, setApplications] = useState([]);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState(initialForm);
   const [editingId, setEditingId] = useState(null);
@@ -38,9 +40,29 @@ function ArtifactSection() {
     }
   };
 
+  const fetchApplications = async () => {
+    setError('');
+    try {
+      const data = await listApplications();
+      setApplications(data);
+    } catch (err) {
+      setError('Failed to load applications.');
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchArtifacts();
+    fetchApplications();
   }, []);
+
+  const getApplicationandJobNameById = (applicationId) => {
+    const application = applications.find((a) => a.id === applicationId);
+    if (!application) return `Application ID ${applicationId}`;
+    const job = application.job;
+    return job ? `${job.company} - ${job.title}` : `Application ID ${applicationId}`;
+  };
+
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -76,7 +98,7 @@ function ArtifactSection() {
       location: formData.location || null,
       notes: formData.notes || null,
       active: Boolean(formData.active),
-      application_id: Number(formData.role_id) || null,
+      application_id: Number(formData.application_id) || null,
     };
 
     try {
@@ -128,15 +150,15 @@ function ArtifactSection() {
             </select>
           </label>
           <label>
-            Application ID
-            <input
-              type="number"
-              name="a"
-              value={formData.application_id}
-              onChange={handleChange}
-              min="1"
-              required
-            />
+            Application
+            <select name="application_id" value={formData.application_id} onChange={handleChange}>
+              <option value="">Select an application</option>
+              {applications.map((app) => (
+                <option key={app.id} value={app.id}>
+                  {getApplicationandJobNameById(app.id)}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
             Version Name
@@ -177,7 +199,7 @@ function ArtifactSection() {
                 <tr>
                   <th>ID</th>
                   <th>Type</th>
-                  <th>Application ID</th>
+                  <th>Application</th>
                   <th>Version</th>
                   <th>Active</th>
                   <th>Created</th>
@@ -189,7 +211,7 @@ function ArtifactSection() {
                   <tr key={artifact.id}>
                     <td>{artifact.id}</td>
                     <td>{artifact.type}</td>
-                    <td>{artifact.application_id}</td>
+                    <td>{getApplicationandJobNameById(artifact.id)}</td>
                     <td>{artifact.version_name}</td>
                     <td>{artifact.active ? 'Yes' : 'No'}</td>
                     <td>{formatDateTime(artifact.created_at)}</td>

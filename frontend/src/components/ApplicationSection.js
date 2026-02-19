@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createApplication, deleteApplication, listApplications, updateApplication } from '../api/applications';
+import { listJobs } from '../api/jobs';
 import { formatDate, toInputDate } from './dateUtils';
 
 const RESPONSE_OPTIONS = [
@@ -23,6 +24,7 @@ const initialForm = {
 function ApplicationSection() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [jobs, setJobs] = useState([]);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState(initialForm);
   const [editingId, setEditingId] = useState(null);
@@ -41,9 +43,28 @@ function ApplicationSection() {
     }
   };
 
+  const fetchJobs = async () => {
+    setError('');
+    try {
+      const data = await listJobs();
+      setJobs(data);
+    } catch (err) {
+      setError('Failed to load jobs.');
+      console.error(err);
+    }
+  }
+
   useEffect(() => {
     fetchApplications();
+    fetchJobs();
   }, []);
+
+
+
+  const getJobTitleById = (jobId) => {
+    const job = jobs.find((j) => j.id === jobId);
+    return job ? `${job.company} - ${job.title}` : `Job ID ${jobId}`;
+  }
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -123,15 +144,15 @@ function ApplicationSection() {
         <form className="card" onSubmit={handleSubmit}>
           <h3>{editingId ? 'Edit Application' : 'Create Application'}</h3>
           <label>
-            Job ID
-            <input
-              type="number"
-              name="job_id"
-              value={formData.job_id}
-              onChange={handleChange}
-              min="1"
-              required
-            />
+            Job
+            <select name="job_id" value={formData.job_id} onChange={handleChange} required>
+              <option value="">Select a job</option>
+              {jobs.map((job) => (
+                <option key={job.id} value={job.id}>
+                  {getJobTitleById(job.id)}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
             Date Sent
@@ -195,7 +216,7 @@ function ApplicationSection() {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Job ID</th>
+                  <th>Job</th>
                   <th>Response</th>
                   <th>Active</th>
                   <th>Date Sent</th>
@@ -207,7 +228,7 @@ function ApplicationSection() {
                 {applications.map((application) => (
                   <tr key={application.id}>
                     <td>{application.id}</td>
-                    <td>{application.job_id}</td>
+                    <td>{getJobTitleById(application.job_id)}</td>
                     <td>{application.response || '-'}</td>
                     <td>{application.active ? 'Yes' : 'No'}</td>
                     <td>{formatDate(application.date_sent)}</td>

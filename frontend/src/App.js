@@ -11,14 +11,13 @@ function App() {
     () => [
       { id: 'roles', label: 'Roles', content: <RoleSection /> },
       { id: 'jobs', label: 'Jobs', content: <JobSection /> },
+      { id: 'applications', label: 'Applications', content: <ApplicationSection /> },
       { id: 'artifacts', label: 'Artifacts', content: <ArtifactSection /> },
       { id: 'metrics', label: 'Metrics', content: <MetricSection /> },
-      { id: 'applications', label: 'Applications', content: <ApplicationSection /> },
     ],
     []
   );
   const [activeTab, setActiveTab] = useState(tabs[0].id);
-  const activeContent = tabs.find((tab) => tab.id === activeTab)?.content;
 
   return (
     <div className="App">
@@ -39,7 +38,15 @@ function App() {
             </button>
           ))}
         </div>
-        <div className="tab-panel">{activeContent}</div>
+        {tabs.map((tab) => (
+          <div
+            key={tab.id}
+            className={`tab-panel ${activeTab === tab.id ? 'active' : 'hidden'}`}
+            hidden={activeTab !== tab.id}
+          >
+            {tab.content}
+          </div>
+        ))}
       </main>
     </div>
   );

@@ -58,7 +58,7 @@ class Role(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
-    jobs = relationship("Job", back_populates="role")
+    jobs = relationship("Job", lazy="selectin", back_populates="role")
 
 
 class Job(Base):
@@ -79,7 +79,7 @@ class Job(Base):
 
     # Relationships
     role = relationship("Role", back_populates="jobs")
-    applications = relationship("Application", back_populates="job", cascade="all, delete-orphan")
+    applications = relationship("Application", back_populates="job", lazy="selectin", cascade="all, delete-orphan")
 
 
 class Application(Base):
@@ -98,7 +98,7 @@ class Application(Base):
 
     # Relationships
     job = relationship("Job", back_populates="applications")
-    artifacts = relationship("Artifact", back_populates="applications", cascade="all, delete-orphan")
+    artifacts = relationship("Artifact", back_populates="applications", lazy="selectin", cascade="all, delete-orphan")
 
 
 class Artifact(Base):
@@ -116,7 +116,7 @@ class Artifact(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
-    metrics = relationship("ArtifactMetric", back_populates="artifact", cascade="all, delete-orphan")
+    metrics = relationship("ArtifactMetric", back_populates="artifact", lazy="selectin", cascade="all, delete-orphan")
     applications = relationship("Application", back_populates="artifacts")
     
 class ArtifactMetric(Base):

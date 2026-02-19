@@ -52,3 +52,7 @@
 .tab-panel {
   min-height: 200px;
 }
+
+.tab-panel.hidden {
+  display: none;
+}

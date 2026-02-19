@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createJob, deleteJob, listJobs, updateJob } from '../api/jobs';
+import { listRoles } from '../api/roles';
 import { formatDate, toInputDate } from './dateUtils';
 
 const STATUS_OPTIONS = [
@@ -24,6 +25,7 @@ const initialForm = {
 
 function JobSection() {
   const [jobs, setJobs] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState(initialForm);
@@ -43,9 +45,31 @@ function JobSection() {
     }
   };
 
+  const fetchRoles = async () => {
+    setError('');
+    try {
+      const data = await listRoles();
+      setRoles(data);
+    } catch (err) {
+      setError('Failed to load roles.');
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchJobs();
+    fetchRoles();
   }, []);
+
+  const formatRoleLabel = (role) => {
+    const lane = (role?.lane || '').replaceAll('_', ' ');
+    return lane ? `${lane} (ID ${role.id})` : `Role ${role.id}`;
+  };
+
+  const getRoleLabelById = (roleId) => {
+    const role = roles.find((item) => item.id === roleId);
+    return role ? formatRoleLabel(role) : `Role ID ${roleId}`;
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -180,15 +204,15 @@ function JobSection() {
             />
           </label>
           <label>
-            Role ID
-            <input
-              type="number"
-              name="role_id"
-              value={formData.role_id}
-              onChange={handleChange}
-              min="1"
-              required
-            />
+            Role
+            <select name="role_id" value={formData.role_id} onChange={handleChange} required>
+              <option value="">Select a role</option>
+              {roles.map((role) => (
+                <option key={role.id} value={role.id}>
+                  {formatRoleLabel(role)}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
             Notes
@@ -219,7 +243,7 @@ function JobSection() {
                   <th>Company</th>
                   <th>Title</th>
                   <th>Status</th>
-                  <th>Role ID</th>
+                  <th>Role</th>
                   <th>Date Found</th>
                   <th>Actions</th>
                 </tr>
@@ -231,7 +255,7 @@ function JobSection() {
                     <td>{job.company}</td>
                     <td>{job.title}</td>
                     <td>{job.status}</td>
-                    <td>{job.role_id}</td>
+                    <td>{job.role?.lane ? formatRoleLabel(job.role) : getRoleLabelById(job.role_id)}</td>
                     <td>{formatDate(job.date_found)}</td>
                     <td className="row-actions">
                       <button type="button" className="ghost" onClick={() => handleEdit(job)}>

@@ -1,6 +1,6 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, Field
 from datetime import datetime, date
-from typing import Optional, List
+from typing import Optional
 from enum import Enum
 
 
@@ -80,81 +80,8 @@ class RoleOut(RoleBase):
         from_attributes = True
 
 
-# Artifact Metric Schemas
-class ArtifactMetricBase(BaseModel):
-    name: str
-    notes: Optional[str] = None
-    active: bool = True
-    ai_generated: bool = False   
-    truth_level: Optional[TruthLevelEnum] = None
-    prompt_strictness: Optional[PromptStrictnessEnum] = None
-    bullet_points: Optional[bool] = None
-    artifact_format_details: Optional[ArtifactFormatDetailsEnum] = None
-    font_size: Optional[FontSizeEnum] = None
 
 
-class ArtifactMetricCreate(ArtifactMetricBase):
-    pass
-
-
-class ArtifactMetricUpdate(BaseModel):
-    name: Optional[str] = None
-    notes: Optional[str] = None
-    active: Optional[bool] = None
-    ai_generated: Optional[bool] = None 
-    truth_level: Optional[TruthLevelEnum] = None
-    prompt_strictness: Optional[PromptStrictnessEnum] = None   
-    bullet_points: Optional[bool] = None
-    artifact_format_details: Optional[ArtifactFormatDetailsEnum] = None
-    font_size: Optional[FontSizeEnum] = None
-
-
-class ArtifactMetricOut(ArtifactMetricBase):
-    id: int
-    artifact_id: int
-    created_at: datetime
-    updated_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
-
-# Artifact Schemas
-class ArtifactBase(BaseModel):
-    type: ArtifactTypeEnum
-    version_name: str
-    location: Optional[str] = None
-    application_id: int
-    notes: Optional[str] = None
-    active: bool = True
-
-
-class ArtifactCreate(ArtifactBase):
-    pass
-
-
-class ArtifactUpdate(BaseModel):
-    type: Optional[ArtifactTypeEnum] = None
-    version_name: Optional[str] = None
-    location: Optional[str] = None
-    application_id: Optional[int] = None
-    notes: Optional[str] = None
-    active: Optional[bool] = None
-
-
-class ArtifactOut(ArtifactBase):
-    id: int
-    created: Optional[datetime] = None
-    created_at: datetime
-    updated_at: Optional[datetime] = None
-    metrics: List[ArtifactMetricOut] = []
-
-    class Config:
-        from_attributes = True
-
-
-class ArtifactWithMetrics(ArtifactOut):
-    metrics: List[ArtifactMetricOut]
 
 
 # Job Schemas
@@ -188,16 +115,12 @@ class JobUpdate(BaseModel):
 
 class JobOut(JobBase):
     id: int
+    role: Optional[RoleOut] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
-
-
-class JobWithApplications(JobOut):
-    applications: List['ApplicationOut'] = []
-
 
 # Application Schemas
 class ApplicationBase(BaseModel):
@@ -223,9 +146,9 @@ class ApplicationUpdate(BaseModel):
     notes: Optional[str] = None
     active: Optional[bool] = None
 
-
 class ApplicationOut(ApplicationBase):
     id: int
+    job: Optional[JobOut] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
@@ -233,10 +156,79 @@ class ApplicationOut(ApplicationBase):
         from_attributes = True
 
 
-class ApplicationWithArtifacts(ApplicationOut):
-    artifacts: List[ArtifactOut] = []
+
+# Artifact Schemas
+class ArtifactBase(BaseModel):
+    type: ArtifactTypeEnum
+    version_name: str
+    location: Optional[str] = None
+    application_id: int
+    notes: Optional[str] = None
+    active: bool = True
+
+
+class ArtifactCreate(ArtifactBase):
+    pass
+
+
+class ArtifactUpdate(BaseModel):
+    type: Optional[ArtifactTypeEnum] = None
+    version_name: Optional[str] = None
+    location: Optional[str] = None
+    application_id: Optional[int] = None
+    notes: Optional[str] = None
+    active: Optional[bool] = None
+
+
+class ArtifactOut(ArtifactBase):
+    id: int
+    application: Optional[ApplicationOut] = Field(default=None, validation_alias="applications")
+    created: Optional[datetime] = None
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+        
+# Artifact Metric Schemas
+class ArtifactMetricBase(BaseModel):
+    name: str
+    notes: Optional[str] = None
+    active: bool = True
+    ai_generated: bool = False   
+    truth_level: Optional[TruthLevelEnum] = None
+    prompt_strictness: Optional[PromptStrictnessEnum] = None
+    bullet_points: Optional[bool] = None
+    artifact_format_details: Optional[ArtifactFormatDetailsEnum] = None
+    font_size: Optional[FontSizeEnum] = None
+
+
+class ArtifactMetricCreate(ArtifactMetricBase):
+    pass
+
+
+class ArtifactMetricUpdate(BaseModel):
+    name: Optional[str] = None
+    notes: Optional[str] = None
+    active: Optional[bool] = None
+    ai_generated: Optional[bool] = None 
+    truth_level: Optional[TruthLevelEnum] = None
+    prompt_strictness: Optional[PromptStrictnessEnum] = None   
+    bullet_points: Optional[bool] = None
+    artifact_format_details: Optional[ArtifactFormatDetailsEnum] = None
+    font_size: Optional[FontSizeEnum] = None
+
+
+class ArtifactMetricOut(ArtifactMetricBase):
+    id: int
+    artifact_id: int
+    artifact: Optional[ArtifactOut] = None
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
 
 
 # Update forward references
-JobWithApplications.model_rebuild()
-ApplicationWithArtifacts.model_rebuild()
+ArtifactMetricOut.model_rebuild()

@@ -1,10 +1,9 @@
-from pathlib import Path
 from typing import List
 from database import get_db
 from models.models import Role, Job, Application, Artifact, ArtifactMetric
-from schemas.schemas import ArtifactMetricOut, RoleOut, JobOut, ApplicationOut, ArtifactOut, ApplicationCreate, ApplicationUpdate, ApplicationWithArtifacts, ArtifactCreate, ArtifactMetricCreate, ArtifactMetricUpdate, ArtifactUpdate, ArtifactWithMetrics, JobCreate, JobUpdate, JobWithApplications,  RoleCreate, RoleUpdate
+from schemas.schemas import ArtifactMetricOut, RoleOut, JobOut, ApplicationOut, ArtifactOut, ApplicationCreate, ApplicationUpdate, ArtifactCreate, ArtifactMetricCreate, ArtifactMetricUpdate, ArtifactUpdate, JobCreate, JobUpdate, RoleCreate, RoleUpdate
 import logging
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 logger = logging.getLogger("jobtelem")
@@ -13,7 +12,7 @@ router = APIRouter()
 
 @router.post("/roles/", response_model=RoleOut, tags=["roles"])
 async def create_role(role: RoleCreate, db: Session = Depends(get_db)):
-    db_role = RoleOut(**role.dict())
+    db_role = Role(**role.dict())
     db.add(db_role)
     db.commit()
     db.refresh(db_role)
@@ -82,9 +81,10 @@ async def get_jobs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
     return jobs
 
 
-@router.get("/jobs/{job_id}", response_model=JobWithApplications, tags=["jobs"])
+@router.get("/jobs/{job_id}", response_model=JobOut, tags=["jobs"])
 async def get_job(job_id: int, db: Session = Depends(get_db)):
     job = db.query(Job).filter(Job.id == job_id).first()
+   
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
     return job
@@ -133,7 +133,7 @@ async def get_artifacts(skip: int = 0, limit: int = 100, db: Session = Depends(g
     return artifacts
 
 
-@router.get("/artifacts/{artifact_id}", response_model=ArtifactWithMetrics, tags=["artifacts"])
+@router.get("/artifacts/{artifact_id}", response_model=ArtifactOut, tags=["artifacts"])
 async def get_artifact(artifact_id: int, db: Session = Depends(get_db)):
     artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
     if not artifact:
@@ -217,7 +217,7 @@ async def delete_artifact_metric(metric_id: int, db: Session = Depends(get_db)):
 
 # ===================== APPLICATIONS =====================
 
-@router.post("/applications/", response_model=ApplicationWithArtifacts, tags=["applications"])
+@router.post("/applications/", response_model=ApplicationOut, tags=["applications"])
 async def create_application(application: ApplicationCreate, db: Session = Depends(get_db)):
     # Verify job exists
     job = db.query(Job).filter(Job.id == application.job_id).first()
@@ -237,7 +237,7 @@ async def get_applications(skip: int = 0, limit: int = 100, db: Session = Depend
     return applications
 
 
-@router.get("/applications/{application_id}", response_model=ApplicationWithArtifacts, tags=["applications"])
+@router.get("/applications/{application_id}", response_model=ApplicationOut, tags=["applications"])
 async def get_application(application_id: int, db: Session = Depends(get_db)):
     application = db.query(Application).filter(Application.id == application_id).first()
     if not application:
