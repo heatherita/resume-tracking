@@ -14,6 +14,7 @@ const initialForm = {
   location: '',
   notes: '',
   active: true,
+  application_id: '',
 };
 
 function ArtifactSection() {
@@ -62,6 +63,7 @@ function ArtifactSection() {
       location: artifact.location || '',
       notes: artifact.notes || '',
       active: Boolean(artifact.active),
+      application_id: artifact.application_id || '',
     });
   };
 
@@ -74,6 +76,7 @@ function ArtifactSection() {
       location: formData.location || null,
       notes: formData.notes || null,
       active: Boolean(formData.active),
+      application_id: Number(formData.role_id) || null,
     };
 
     try {
@@ -125,6 +128,17 @@ function ArtifactSection() {
             </select>
           </label>
           <label>
+            Application ID
+            <input
+              type="number"
+              name="a"
+              value={formData.application_id}
+              onChange={handleChange}
+              min="1"
+              required
+            />
+          </label>
+          <label>
             Version Name
             <input name="version_name" value={formData.version_name} onChange={handleChange} required />
           </label>
@@ -163,6 +177,7 @@ function ArtifactSection() {
                 <tr>
                   <th>ID</th>
                   <th>Type</th>
+                  <th>Application ID</th>
                   <th>Version</th>
                   <th>Active</th>
                   <th>Created</th>
@@ -174,6 +189,7 @@ function ArtifactSection() {
                   <tr key={artifact.id}>
                     <td>{artifact.id}</td>
                     <td>{artifact.type}</td>
+                    <td>{artifact.application_id}</td>
                     <td>{artifact.version_name}</td>
                     <td>{artifact.active ? 'Yes' : 'No'}</td>
                     <td>{formatDateTime(artifact.created_at)}</td>

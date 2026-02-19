@@ -1,0 +1,219 @@
+name: "Heather Propes"
+location: "Keyport, New Jersey"
+phone: "732-900-3895"
+email: "hbuch4@yahoo.com"
+
+summary:
+  - text: >
+      Experienced software developer with 20+ years of expertise in designing, developing, and optimizing enterprise applications.
+      Strong proficiency in Java, Python, SQL, and front-end frameworks. Expertise in AWS EC2 high-availability environments, 
+      configuration management with Ansible, CI/CD workflows, and release automation. Passionate about delivering high-performance 
+      applications and scalable solutions.
+    tags: ["java"]
+  - text: >
+      Experienced software developer with 20+ years of expertise in designing, developing, and optimizing enterprise applications.
+      Strong proficiency in SQL, PHP, and Python. Years of experience developing native PHP and Wordpress applications.
+      Expertise in AWS EC2 high-availability environments, CI/CD workflows, and release automation. Passionate about delivering 
+      high-performance applications and scalable solutions.
+    tags: ["php"]
+  - text: >
+      Experienced software developer with 20+ years of expertise in designing, developing, and optimizing enterprise applications.
+      Strong proficiency in SQL, Python and web data analysis. Expertise in AWS EC2 high-availability environments, configuration 
+      management with Ansible, CI/CD workflows, and release automation. Passionate about delivering high-performance applications 
+      and scalable solutions.
+    tags: ["data_analyst"]
+  - text: >
+      Software developer with 20+ years of experience in web development, backend systems, cloud infrastructure, and automation.
+      Skilled in Java, Python, SQL, web technologies, and AWS. Strong background in problem-solving, documentation, mentoring, 
+      and systems thinking. Passionate about helping students gain confidence with technology and understand how computers 
+      work “under the hood".
+    tags: ["teacher"]
+
+certification:
+    - header:
+        New Jersey CTE Certificate of Eligibility (4148)
+      tags: ["teacher"]
+    - text: >
+        Computer Science Technology
+        Authorized instructional areas include computer science, programming, networking, cybersecurity, data processing, 
+        web development, computer graphics, modeling/simulation, and information technology.
+      tags: ["teacher"]
+
+skills:
+  - header: "Programming Languages"
+    skill: "Java, SQL, Python, PHP, Bash"
+    tags: ["java","php","data_analyst","teacher"]
+  - header: "DevOps & Platform"
+    skill: "AWS (EC2, S3), Ansible, CI/CD workflows, Git, Docker, Linux"
+    tags: ["java","php","data_analyst","teacher"]
+  - header: "Salesforce Platform"
+    skill: "Salesforce APIs, Sandbox environments, Enterprise CRM integrations"
+    tags: ["salesforce"]
+  - header: "Frameworks & Libraries"
+    skill: "Java EE, PrimeFaces, FastAPI, Tailwind, Flask, React"
+    tags: ["java","php","data_analyst","teacher"]
+  - header: "Databases"
+    skill: "PostgreSQL, MySQL, Oracle, MS SQL Server"
+    tags: ["java","php","data_analyst","teacher"]
+  - header: "Web Technologies"
+    skill: "REST APIs, HTTP/JSON, HTML, CSS"
+    tags: ["java","php","data_analyst","teacher"]
+  - header: "Development Tools"
+    skill: "Git, Maven, IntelliJ, Eclipse"
+    tags: ["java","php","data_analyst","teacher"]
+  - header: "Test Platforms"
+    skill: "JUnit, Selenium, Apache JMeter"
+    tags: ["java","php","data_analyst","teacher"]
+  - header: "Cloud & Servers"
+    skill: "AWS, Tomcat, Apache, WebLogic"
+    tags: ["java","php","data_analyst","teacher"]
+
+experience:
+  - company: "Bettaway Supply Chain Services"
+    title: "Java Programmer/Analyst"
+    location: "South Plainfield, NJ"
+    dates: "2015 - 2025"
+    bullets:
+      - text: "Developed and maintained enterprise Java applications to support logistics and supply chain operations, saving 200K annually on enterprise service contracts."
+        tags: ["java","php","teacher"]
+      - text: "Led Okta authentication software migration requiring deep analysis of web user data."
+        tags: [ "data_analyst" ]
+      - text: "Created SQL queries to handle logistics operations tasks such as FCFS pickup and delivery, truck scheduling, and fuel pricing."
+        tags: [ "data_analyst" ]
+      - text: "Optimized SQL queries and database performance to improve system efficiency."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Built and maintained RESTful APIs integrating third-party services (Macropoint, Okta, Salesforce, Microdea Synergize)."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Integrated and operated Salesforce APIs and sandbox environments as part of a J2EE-based enterprise CRUD application, syncing customer and operational data between internal systems and Salesforce."
+        tags: ["salesforce"]
+      - text: "Implemented DevOps best practices for configuration management and deployment automation, cutting deployment-related downtime by 90%."
+        tags: ["java","php","teacher"]
+      - text: "Designed and automated AWS EC2 infrastructure upgrades and provisioning using Ansible, eliminating manual system updates and enabling safe, staged rollout of Linux and Payara middleware updates via a dedicated staging environment."
+        tags: ["java","php","teacher"]
+      - text: "Designed and automated WordPress core, plugin, and content updates using Ansible and WP-CLI, reducing manual maintenance and ensuring timely security updates and article publication."
+        tags: ["php"]
+      - text: "Maintained a CI/CD pipeline for J2EE applications by integrating Mercurial with Jenkins and Maven."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Created dynamic PDF reports using SQL and Apache FOP for data-driven decision-making."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Wrote unit testing suites using JUnit and load testing scripts using Apache JMeter."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Led UI enhancements using JavaServer Faces (JSF) and WordPress (PHP)."
+        tags: ["java","php","data_analyst","teacher"]
+
+  - company: "Hub City Media"
+    title: "Senior Software Engineer"
+    location: "South Plainfield, NJ"
+    dates: "2014 - 2015"
+    bullets:
+      - text: "Provisioned and reconciled accounts to LDAP, Active Directory, and databases using OIM and Oracle Waveset."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Built OIM plugins to automate account provisioning and reconciliation."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Developed SOA workflows for approvals, reducing errors and improving compliance."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Analyzed OEM 12c Cloud Control to monitor and gather metrics on IAM systems."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Team Lead for major client in higher education."
+        tags: ["java","php","data_analyst","teacher"]
+
+  - company: "BluPax Pharmaceuticals"
+    title: "LAMP Developer"
+    location: "Edison, NJ"
+    dates: "2013 - 2014"
+    bullets:
+      - text: "Developed system for ordering, labeling, and receiving products using PHP/MySQL and MVC architecture."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Designed MySQL database and integrated it with QuickBooks using api tools."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Performed QuickBooks upgrades (Enterprise 2013, Enterprise 2014), adhering to security best practices."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Developed e-commerce site using PHP."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "EDI translation (X12 to XML/CSV)."
+        tags: ["data_analyst"]
+      - text: "Desktop support."
+        tags: ["java","php","data_analyst","teacher"]
+
+  - company: "Strauss Auto"
+    title: "LAMP Developer"
+    location: "South River, NJ"
+    dates: "2008 - 2012"
+    bullets:
+      - text: "Developed web applications using CodeIgniter framework and jQuery/AJAX."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Created user interface for POS (point of sale) system in Java 6 using Java Swing UI libraries."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Wrote rule-based coupon generator to accompany POS system in Java 6."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Wrote Java unit tests to test all user interface components using UISpec4J 2.3."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "DB2 queries and database modeling using IBM AS400 platform."
+        tags: ["java","php","data_analyst","teacher"]
+
+  - company: "Musical Heritage Society"
+    title: "PHP Developer"
+    location: "Oakhurst, NJ"
+    dates: "2007 - 2008"
+    bullets:
+      - text: "Programmed ecommerce sites using CakePHP and HTML."
+        tags: ["java","php","data_analyst","teacher"]
+
+  - company: "Crusoe Communications"
+    title: "Web Programmer (freelance)"
+    location: "West Caldwell, NJ"
+    dates: "2006 - 2010"
+    bullets:
+      - text: "Developed and maintained client web sites using PHP and osCommerce."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "SEO and Google Ad Words campaign resulting in significant increase of client web traffic."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Creation of web graphics and web site design."
+        tags: ["java","php","data_analyst","teacher"]
+
+  - company: "Aarhus University"
+    title: "Java Programmer"
+    location: "Aarhus, Denmark"
+    dates: "2002 - 2003"
+    bullets:
+      - text: "Created Student Registration System for Economics Department in Java 3 using J2EE 1.3, Tomcat 4.1 and Struts 1.2."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Installed and administered Apache web server 1.3.20."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Wrote scripts using perl 5.8.0 to import and export data for student registration application."
+        tags: ["java","php","data_analyst","teacher"]
+
+  - company: "Massachusetts Institute of Technology (MIT)"
+    title: "Java Analyst Programmer II"
+    location: "Cambridge, MA"
+    dates: "2000 - 2002"
+    bullets:
+      - text: "Java 3 development for web-based distance-learning applications."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Project manager for web server migration project (IIS to Apache) which increased web security for vulnerable client."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Co-developed set of Java libraries to automate creation of database web applications."
+        tags: ["java","php","data_analyst","teacher"]
+
+projects:
+  - name: "AnswerBank"
+    dates: "July 2025 – Present"
+    bullets:
+      - text: "Designed, deployed, and operated a secure RAG QA pipeline platform using AWS, Docker, FastAPI, and React."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Built CI/CD workflows and environment isolation for development and production."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Implemented authentication, role-based access control, and secure API integrations."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Managed infrastructure, deployments, monitoring, and iterative releases."
+        tags: ["java","php","data_analyst","teacher"]
+      - text: "Built a responsive React frontend with Tailwind CSS for styling."
+        tags: ["java","php","data_analyst","teacher"]
+
+education:
+  - school: "University of Chicago"
+    detail: "Master’s Degree"
+    year: "1996"
+  - school: "UCLA"
+    detail: "Bachelor of Arts (BA)"
+    year: "1993"

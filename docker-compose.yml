@@ -19,7 +19,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-        - app_network
+      - app_network
 
   # FastAPI Backend
   backend:
@@ -36,6 +36,7 @@ services:
       DEBUG: "True"
     volumes:
       - ./backend:/app
+      - /home/appuser/jobsearch/tmp:/tmp
     depends_on:
       db:
         condition: service_healthy

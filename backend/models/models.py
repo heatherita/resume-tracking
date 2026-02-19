@@ -98,13 +98,14 @@ class Application(Base):
 
     # Relationships
     job = relationship("Job", back_populates="applications")
-    artifacts = relationship("Artifact", back_populates="applications", secondary="application_artifacts")
+    artifacts = relationship("Artifact", back_populates="applications", cascade="all, delete-orphan")
 
 
 class Artifact(Base):
     __tablename__ = "artifacts"
 
     id = Column(Integer, primary_key=True, index=True)
+    application_id = Column(Integer, ForeignKey("applications.id"), nullable=False)
     type = Column(Enum(ArtifactTypeEnum), nullable=False)
     version_name = Column(String, nullable=False)
     location = Column(String)
@@ -116,9 +117,8 @@ class Artifact(Base):
 
     # Relationships
     metrics = relationship("ArtifactMetric", back_populates="artifact", cascade="all, delete-orphan")
-    applications = relationship("Application", back_populates="artifacts", secondary="application_artifacts")
-
-
+    applications = relationship("Application", back_populates="artifacts")
+    
 class ArtifactMetric(Base):
     __tablename__ = "artifact_metrics"
 
@@ -141,11 +141,11 @@ class ArtifactMetric(Base):
 
 
 # Association table for many-to-many relationship between Applications and Artifacts
-from sqlalchemy import Table
+# from sqlalchemy import Table
 
-application_artifacts = Table(
-    'application_artifacts',
-    Base.metadata,
-    Column('application_id', Integer, ForeignKey('applications.id'), primary_key=True),
-    Column('artifact_id', Integer, ForeignKey('artifacts.id'), primary_key=True)
-)
+# application_artifacts = Table(
+#     'application_artifacts',
+#     Base.metadata,
+#     Column('application_id', Integer, ForeignKey('applications.id'), primary_key=True),
+#     Column('artifact_id', Integer, ForeignKey('artifacts.id'), primary_key=True)
+# )

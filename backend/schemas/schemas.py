@@ -71,7 +71,7 @@ class RoleUpdate(BaseModel):
     notes: Optional[str] = None
 
 
-class Role(RoleBase):
+class RoleOut(RoleBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
@@ -109,7 +109,7 @@ class ArtifactMetricUpdate(BaseModel):
     font_size: Optional[FontSizeEnum] = None
 
 
-class ArtifactMetric(ArtifactMetricBase):
+class ArtifactMetricOut(ArtifactMetricBase):
     id: int
     artifact_id: int
     created_at: datetime
@@ -124,6 +124,7 @@ class ArtifactBase(BaseModel):
     type: ArtifactTypeEnum
     version_name: str
     location: Optional[str] = None
+    application_id: int
     notes: Optional[str] = None
     active: bool = True
 
@@ -136,23 +137,24 @@ class ArtifactUpdate(BaseModel):
     type: Optional[ArtifactTypeEnum] = None
     version_name: Optional[str] = None
     location: Optional[str] = None
+    application_id: Optional[int] = None
     notes: Optional[str] = None
     active: Optional[bool] = None
 
 
-class Artifact(ArtifactBase):
+class ArtifactOut(ArtifactBase):
     id: int
     created: Optional[datetime] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
-    metrics: List[ArtifactMetric] = []
+    metrics: List[ArtifactMetricOut] = []
 
     class Config:
         from_attributes = True
 
 
-class ArtifactWithMetrics(Artifact):
-    metrics: List[ArtifactMetric]
+class ArtifactWithMetrics(ArtifactOut):
+    metrics: List[ArtifactMetricOut]
 
 
 # Job Schemas
@@ -184,7 +186,7 @@ class JobUpdate(BaseModel):
     role_id: Optional[int] = None
 
 
-class Job(JobBase):
+class JobOut(JobBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
@@ -193,8 +195,8 @@ class Job(JobBase):
         from_attributes = True
 
 
-class JobWithApplications(Job):
-    applications: List['Application'] = []
+class JobWithApplications(JobOut):
+    applications: List['ApplicationOut'] = []
 
 
 # Application Schemas
@@ -222,7 +224,7 @@ class ApplicationUpdate(BaseModel):
     active: Optional[bool] = None
 
 
-class Application(ApplicationBase):
+class ApplicationOut(ApplicationBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
@@ -231,8 +233,8 @@ class Application(ApplicationBase):
         from_attributes = True
 
 
-class ApplicationWithArtifacts(Application):
-    artifacts: List[Artifact] = []
+class ApplicationWithArtifacts(ApplicationOut):
+    artifacts: List[ArtifactOut] = []
 
 
 # Update forward references
