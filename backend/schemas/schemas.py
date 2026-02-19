@@ -12,7 +12,6 @@ class LaneEnum(str, Enum):
 
 class ArtifactTypeEnum(str, Enum):
     resume = "resume"
-    bullets = "bullets"
     cover_letter = "cover_letter"
 
 
@@ -52,6 +51,12 @@ class ArtifactFormatDetailsEnum(str, Enum):
     colors_used = "colors_used"
     headshot_used = "headshot_used"
     serif_font = "serif_font"
+
+
+class SectionTypeEnum(str, Enum):
+    header = "header"
+    text = "text"
+    bullets = "bullets"
 
 
 # Role Schemas
@@ -184,6 +189,33 @@ class ArtifactOut(ArtifactBase):
     id: int
     application: Optional[ApplicationOut] = Field(default=None, validation_alias="applications")
     created: Optional[datetime] = None
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class SectionBase(BaseModel):
+    name: str
+    type: SectionTypeEnum
+    content: str
+    order: int
+
+
+class SectionCreate(SectionBase):
+    pass
+
+
+class SectionUpdate(BaseModel):
+    name: Optional[str] = None
+    type: Optional[SectionTypeEnum] = None
+    content: Optional[str] = None
+    order: Optional[int] = None
+
+
+class SectionOut(SectionBase):
+    id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
 

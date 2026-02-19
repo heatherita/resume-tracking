@@ -1,7 +1,26 @@
 from typing import List
 from database import get_db
-from models.models import Role, Job, Application, Artifact, ArtifactMetric
-from schemas.schemas import ArtifactMetricOut, RoleOut, JobOut, ApplicationOut, ArtifactOut, ApplicationCreate, ApplicationUpdate, ArtifactCreate, ArtifactMetricCreate, ArtifactMetricUpdate, ArtifactUpdate, JobCreate, JobUpdate, RoleCreate, RoleUpdate
+from models.models import Role, Job, Application, Artifact, ArtifactMetric, Section
+from schemas.schemas import (
+    ArtifactMetricOut,
+    RoleOut,
+    JobOut,
+    ApplicationOut,
+    ArtifactOut,
+    ApplicationCreate,
+    ApplicationUpdate,
+    ArtifactCreate,
+    ArtifactMetricCreate,
+    ArtifactMetricUpdate,
+    ArtifactUpdate,
+    JobCreate,
+    JobUpdate,
+    RoleCreate,
+    RoleUpdate,
+    SectionCreate,
+    SectionUpdate,
+    SectionOut,
+)
 import logging
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -165,6 +184,113 @@ async def delete_artifact(artifact_id: int, db: Session = Depends(get_db)):
     db.delete(artifact)
     db.commit()
     return {"message": "Artifact deleted successfully"}
+
+
+# ===================== SECTIONS =====================
+
+@router.post("/sections/", response_model=SectionOut, tags=["sections"])
+async def create_section(section: SectionCreate, db: Session = Depends(get_db)):
+    db_section = Section(**section.dict())
+    db.add(db_section)
+    db.commit()
+    db.refresh(db_section)
+    return db_section
+
+
+@router.get("/sections/", response_model=List[SectionOut], tags=["sections"])
+async def get_sections(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    sections = db.query(Section).order_by(Section.order.asc(), Section.id.asc()).offset(skip).limit(limit).all()
+    return sections
+
+
+@router.get("/sections/{section_id}", response_model=SectionOut, tags=["sections"])
+async def get_section(section_id: int, db: Session = Depends(get_db)):
+    section = db.query(Section).filter(Section.id == section_id).first()
+    if not section:
+        raise HTTPException(status_code=404, detail="Section not found")
+    return section
+
+
+@router.put("/sections/{section_id}", response_model=SectionOut, tags=["sections"])
+async def update_section(section_id: int, section: SectionUpdate, db: Session = Depends(get_db)):
+    db_section = db.query(Section).filter(Section.id == section_id).first()
+    if not db_section:
+        raise HTTPException(status_code=404, detail="Section not found")
+
+    update_data = section.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_section, key, value)
+
+    db.add(db_section)
+    db.commit()
+    db.refresh(db_section)
+    return db_section
+
+
+@router.delete("/sections/{section_id}", tags=["sections"])
+async def delete_section(section_id: int, db: Session = Depends(get_db)):
+    section = db.query(Section).filter(Section.id == section_id).first()
+    if not section:
+        raise HTTPException(status_code=404, detail="Section not found")
+    db.delete(section)
+    db.commit()
+    return {"message": "Section deleted successfully"}
+
+
+@router.get("/artifacts/{artifact_id}/sections/", response_model=List[SectionOut], tags=["sections"])
+async def get_artifact_sections(artifact_id: int, db: Session = Depends(get_db)):
+    artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
+    if not artifact:
+        raise HTTPException(status_code=404, detail="Artifact not found")
+    return artifact.sections
+
+
+@router.post("/artifacts/{artifact_id}/sections/", response_model=SectionOut, tags=["sections"])
+async def create_section_for_artifact(artifact_id: int, section: SectionCreate, db: Session = Depends(get_db)):
+    artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
+    if not artifact:
+        raise HTTPException(status_code=404, detail="Artifact not found")
+
+    db_section = Section(**section.dict())
+    artifact.sections.append(db_section)
+    db.add(db_section)
+    db.commit()
+    db.refresh(db_section)
+    return db_section
+
+
+@router.post("/artifacts/{artifact_id}/sections/{section_id}", tags=["sections"])
+async def attach_section_to_artifact(artifact_id: int, section_id: int, db: Session = Depends(get_db)):
+    artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
+    if not artifact:
+        raise HTTPException(status_code=404, detail="Artifact not found")
+
+    section = db.query(Section).filter(Section.id == section_id).first()
+    if not section:
+        raise HTTPException(status_code=404, detail="Section not found")
+
+    if section not in artifact.sections:
+        artifact.sections.append(section)
+        db.commit()
+
+    return {"message": "Section attached to artifact"}
+
+
+@router.delete("/artifacts/{artifact_id}/sections/{section_id}", tags=["sections"])
+async def detach_section_from_artifact(artifact_id: int, section_id: int, db: Session = Depends(get_db)):
+    artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
+    if not artifact:
+        raise HTTPException(status_code=404, detail="Artifact not found")
+
+    section = db.query(Section).filter(Section.id == section_id).first()
+    if not section:
+        raise HTTPException(status_code=404, detail="Section not found")
+
+    if section in artifact.sections:
+        artifact.sections.remove(section)
+        db.commit()
+
+    return {"message": "Section detached from artifact"}
 
 
 # ===================== ARTIFACT METRICS =====================

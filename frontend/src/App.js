@@ -5,6 +5,7 @@ import JobSection from './components/JobSection';
 import ArtifactSection from './components/ArtifactSection';
 import MetricSection from './components/MetricSection';
 import ApplicationSection from './components/ApplicationSection';
+import SectionComponent from './components/SectionComponent';
 
 function App() {
   const tabs = useMemo(
@@ -13,6 +14,7 @@ function App() {
       { id: 'jobs', label: 'Jobs', content: <JobSection /> },
       { id: 'applications', label: 'Applications', content: <ApplicationSection /> },
       { id: 'artifacts', label: 'Artifacts', content: <ArtifactSection /> },
+      { id: 'sections', label: 'Sections', content: <SectionComponent /> },
       { id: 'metrics', label: 'Metrics', content: <MetricSection /> },
     ],
     []
@@ -23,7 +25,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>Resume Tracking Admin</h1>
-        <p>Manage roles, jobs, artifacts, metrics, and applications.</p>
+        <p>Manage roles, jobs, applications, artifacts, sections, and metrics.</p>
       </header>
       <main className="container">
         <div className="tabs">

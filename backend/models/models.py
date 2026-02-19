@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, Date, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, Date, ForeignKey, Enum, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database import Base
@@ -13,7 +13,6 @@ class LaneEnum(str, enum.Enum):
 
 class ArtifactTypeEnum(str, enum.Enum):
     resume = "resume"
-    bullets = "bullets"
     cover_letter = "cover_letter"
 
 
@@ -46,6 +45,10 @@ class FontSizeEnum(str, enum.Enum):
     size_12pt = "12pt"
     size_10pt = "10pt"
 
+class SectionTypeEnum(str, enum.Enum):
+    header = "header"
+    text = "text"
+    bullets = "bullets"
 
 class Role(Base):
     __tablename__ = "roles"
@@ -116,6 +119,7 @@ class Artifact(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
+    sections = relationship("Section", secondary="artifact_sections", back_populates="artifacts", lazy="selectin")
     metrics = relationship("ArtifactMetric", back_populates="artifact", lazy="selectin", cascade="all, delete-orphan")
     applications = relationship("Application", back_populates="artifacts")
     
@@ -140,12 +144,22 @@ class ArtifactMetric(Base):
     artifact = relationship("Artifact", back_populates="metrics")
 
 
-# Association table for many-to-many relationship between Applications and Artifacts
-# from sqlalchemy import Table
+class Section(Base):
+    __tablename__ = "sections" 
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    type = Column(Enum(SectionTypeEnum), nullable=False)
+    content = Column(Text, nullable=False)
+    order = Column(Integer, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    artifacts = relationship("Artifact", secondary="artifact_sections", back_populates="sections", lazy="selectin")
 
-# application_artifacts = Table(
-#     'application_artifacts',
-#     Base.metadata,
-#     Column('application_id', Integer, ForeignKey('applications.id'), primary_key=True),
-#     Column('artifact_id', Integer, ForeignKey('artifacts.id'), primary_key=True)
-# )
+
+# Association table for many-to-many relationship between Artifacts and Sections
+artifact_sections = Table(
+    "artifact_sections",
+    Base.metadata,
+    Column("artifact_id", Integer, ForeignKey("artifacts.id"), primary_key=True),
+    Column("section_id", Integer, ForeignKey("sections.id"), primary_key=True),
+)
