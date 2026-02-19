@@ -11,7 +11,6 @@ const initialForm = {
   name: '',
   type: 'header',
   content: '',
-  order: 1,
 };
 
 function SectionComponent() {
@@ -43,7 +42,7 @@ function SectionComponent() {
     const { name, value } = event.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'order' ? Number(value) : value,
+      [name]: value,
     }));
   };
 
@@ -58,7 +57,6 @@ function SectionComponent() {
       name: section.name || '',
       type: section.type || 'header',
       content: section.content || '',
-      order: section.order || 1,
     });
   };
 
@@ -69,7 +67,6 @@ function SectionComponent() {
       name: formData.name,
       type: formData.type,
       content: formData.content,
-      order: Number(formData.order),
     };
 
     try {
@@ -128,10 +125,6 @@ function SectionComponent() {
             Content
             <textarea name="content" value={formData.content} onChange={handleChange} rows="4" required />
           </label>
-          <label>
-            Order
-            <input type="number" min="1" name="order" value={formData.order} onChange={handleChange} required />
-          </label>
           <div className="form-actions">
             <button type="submit" className="primary">
               {editingId ? 'Update Section' : 'Create Section'}
@@ -156,7 +149,6 @@ function SectionComponent() {
                   <th>ID</th>
                   <th>Name</th>
                   <th>Type</th>
-                  <th>Order</th>
                   <th>Content</th>
                   <th>Actions</th>
                 </tr>
@@ -167,7 +159,6 @@ function SectionComponent() {
                     <td>{section.id}</td>
                     <td>{section.name}</td>
                     <td>{section.type}</td>
-                    <td>{section.order}</td>
                     <td>{section.content}</td>
                     <td className="row-actions">
                       <button type="button" className="ghost" onClick={() => handleEdit(section)}>

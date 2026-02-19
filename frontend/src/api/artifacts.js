@@ -50,8 +50,8 @@ export const createSectionForArtifact = async (artifactId, payload) => {
   return response.data;
 };
 
-export const attachSectionToArtifact = async (artifactId, sectionId) => {
-  const response = await client.post(`/artifacts/${artifactId}/sections/${sectionId}`);
+export const attachSectionToArtifact = async (artifactId, sectionId, payload) => {
+  const response = await client.post(`/artifacts/${artifactId}/sections/${sectionId}`, payload);
   return response.data;
 };
 

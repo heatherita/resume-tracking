@@ -200,7 +200,6 @@ class SectionBase(BaseModel):
     name: str
     type: SectionTypeEnum
     content: str
-    order: int
 
 
 class SectionCreate(SectionBase):
@@ -211,7 +210,6 @@ class SectionUpdate(BaseModel):
     name: Optional[str] = None
     type: Optional[SectionTypeEnum] = None
     content: Optional[str] = None
-    order: Optional[int] = None
 
 
 class SectionOut(SectionBase):
@@ -221,6 +219,18 @@ class SectionOut(SectionBase):
 
     class Config:
         from_attributes = True
+
+
+class ArtifactSectionAttach(BaseModel):
+    section_order: Optional[int] = None
+
+
+class ArtifactSectionOut(BaseModel):
+    id: int
+    name: str
+    type: SectionTypeEnum
+    content: str
+    section_order: int
         
 # Artifact Metric Schemas
 class ArtifactMetricBase(BaseModel):

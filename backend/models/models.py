@@ -150,7 +150,6 @@ class Section(Base):
     name = Column(String, nullable=False)
     type = Column(Enum(SectionTypeEnum), nullable=False)
     content = Column(Text, nullable=False)
-    order = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     artifacts = relationship("Artifact", secondary="artifact_sections", back_populates="sections", lazy="selectin")
@@ -162,4 +161,5 @@ artifact_sections = Table(
     Base.metadata,
     Column("artifact_id", Integer, ForeignKey("artifacts.id"), primary_key=True),
     Column("section_id", Integer, ForeignKey("sections.id"), primary_key=True),
+    Column("section_order", Integer, nullable=False, server_default="1"),
 )

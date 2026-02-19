@@ -32,6 +32,7 @@ function ArtifactSection() {
   const [artifactSections, setArtifactSections] = useState([]);
   const [selectedArtifactId, setSelectedArtifactId] = useState('');
   const [sectionToAttachId, setSectionToAttachId] = useState('');
+  const [sectionOrder, setSectionOrder] = useState(1);
   const [loading, setLoading] = useState(false);
   const [applications, setApplications] = useState([]);
   const [error, setError] = useState('');
@@ -103,6 +104,11 @@ function ArtifactSection() {
   useEffect(() => {
     fetchArtifactSections(selectedArtifactId);
   }, [selectedArtifactId]);
+
+  useEffect(() => {
+    const maxOrder = artifactSections.reduce((max, section) => Math.max(max, Number(section.section_order || 0)), 0);
+    setSectionOrder(maxOrder + 1);
+  }, [artifactSections]);
 
   const getApplicationAndJobNameById = (applicationId) => {
     const application = applications.find((a) => a.id === applicationId);
@@ -182,10 +188,11 @@ function ArtifactSection() {
     if (!selectedArtifactId || !sectionToAttachId) return;
     setError('');
     try {
-      await attachSectionToArtifact(selectedArtifactId, sectionToAttachId);
+      await attachSectionToArtifact(selectedArtifactId, sectionToAttachId, { section_order: Number(sectionOrder) });
       const latest = await listArtifactSections(selectedArtifactId);
       setArtifactSections(latest);
       setSectionToAttachId('');
+      setSectionOrder((prev) => prev + 1);
     } catch (err) {
       setError('Failed to attach section.');
       console.error(err);
@@ -208,6 +215,11 @@ function ArtifactSection() {
     const attachedIds = new Set(artifactSections.map((section) => section.id));
     return sections.filter((section) => !attachedIds.has(section.id));
   }, [sections, artifactSections]);
+
+  const selectedArtifact = useMemo(
+    () => artifacts.find((artifact) => String(artifact.id) === String(selectedArtifactId)) || null,
+    [artifacts, selectedArtifactId]
+  );
 
   return (
     <section className="section">
@@ -329,17 +341,11 @@ function ArtifactSection() {
       <div className="section-grid" style={{ marginTop: '20px' }}>
         <div className="card">
           <h3>Sections for Selected Artifact</h3>
-          <label>
-            Selected Artifact
-            <select value={selectedArtifactId} onChange={(event) => setSelectedArtifactId(event.target.value)}>
-              <option value="">Select an artifact</option>
-              {artifacts.map((artifact) => (
-                <option key={artifact.id} value={artifact.id}>
-                  #{artifact.id} {artifact.version_name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <p className="muted">
+            {selectedArtifact
+              ? `Selected: #${selectedArtifact.id} ${selectedArtifact.version_name}`
+              : 'Select an artifact from the Artifact List first.'}
+          </p>
 
           <div className="form-actions" style={{ marginBottom: '12px' }}>
             <select value={sectionToAttachId} onChange={(event) => setSectionToAttachId(event.target.value)}>
@@ -350,7 +356,19 @@ function ArtifactSection() {
                 </option>
               ))}
             </select>
-            <button type="button" className="ghost" onClick={handleAttachSection} disabled={!selectedArtifactId || !sectionToAttachId}>
+            <input
+              type="number"
+              min="1"
+              value={sectionOrder}
+              onChange={(event) => setSectionOrder(Number(event.target.value))}
+              style={{ maxWidth: '120px' }}
+            />
+            <button
+              type="button"
+              className="ghost"
+              onClick={handleAttachSection}
+              disabled={!selectedArtifactId || !sectionToAttachId}
+            >
               Attach
             </button>
           </div>
@@ -376,7 +394,7 @@ function ArtifactSection() {
                     <td>{section.id}</td>
                     <td>{section.name}</td>
                     <td>{section.type}</td>
-                    <td>{section.order}</td>
+                    <td>{section.section_order}</td>
                     <td className="row-actions">
                       <button type="button" className="ghost" onClick={() => handleDetachSection(section.id)}>
                         Detach
