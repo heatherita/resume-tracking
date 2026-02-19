@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any
 import config
 from config.settings import BASE_STORAGE_PATH
-from services.resume_service import build_md, create_odt_from_md, load_yaml
+from services.resume_service import build_md, create_odt_from_md, create_pdf_from_md, load_yaml
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -25,3 +25,7 @@ def create_markdown_resume(resume_data: dict[str, Any]):
 def create_odt_resume():
     create_odt_from_md()
 
+
+@router.post("/resume/create/pdf")
+def create_pdf_resume(pdf_engine: str = "tectonic"):
+    create_pdf_from_md(pdf_engine=pdf_engine)

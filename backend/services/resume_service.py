@@ -65,7 +65,7 @@ def render_header(data: dict[str, Any]) -> str:
         if v:
             contact_bits.append(md_escape(str(v)))
     if contact_bits:
-        lines.append(f"### {' * '.join(contact_bits)}")
+        lines.append(f"### {' • '.join(contact_bits)}")
     lines.append("")
     return "\n".join(lines)
 
@@ -243,14 +243,34 @@ def build_md(data: dict[str, Any], include: set[str], exclude: set[str], mode: s
 def create_odt_from_md():
     md_path = Path(BASE_STORAGE_PATH) / "resume.md"
     odt_path = Path(BASE_STORAGE_PATH) / "resume.odt"
+    
+    ref_doc_path = Path(__file__).resolve().parents[1] / "config" / "custom-reference.odt"
     cmd = [
     "pandoc",
-    "--reference-doc=../config/custom-reference.odt",
+    str(md_path),
+    "--reference-doc", str(ref_doc_path),
     "-t","odt",
-    md_path,
-    "-o", "resume.teacher.odt",
-    odt_path,
+    "-o", str(odt_path),
     ]    
+    subprocess.run(cmd, check=True)
+
+
+def create_pdf_from_md(pdf_engine: str = "tectonic"):
+    md_path = Path(BASE_STORAGE_PATH) / "resume.md"
+    pdf_path = Path(BASE_STORAGE_PATH) / "resume.pdf"
+    template_path = Path(__file__).resolve().parents[1] / "config" / "resume-template.tex"
+    cmd = [
+        "pandoc",
+        str(md_path),
+        "--pdf-engine", pdf_engine,
+        "--template", str(template_path),
+        # "-V", "geometry:margin=0.75in",
+        "-V", "fontsize=10pt",
+        "-V", "mainfont=DejaVu Sans",
+        "-V", "sansfont=DejaVu Sans",
+        # "-V", "linestretch=1.05",
+        "-o", str(pdf_path),
+    ]
     subprocess.run(cmd, check=True)
             
 
