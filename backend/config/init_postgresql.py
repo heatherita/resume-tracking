@@ -15,9 +15,10 @@ from models import models  # noqa: F401 - ensures model tables are registered on
 # docker exec -it answerbank-backend python /backend/config/init_postgresql.py
 
 
-
 if not Base.metadata.tables:
     raise RuntimeError("No tables found in Base.metadata. Ensure models are imported before create_all().")
 
 Base.metadata.create_all(bind=engine)
 print(f"Initialized tables: {', '.join(sorted(Base.metadata.tables.keys()))}")
+
+

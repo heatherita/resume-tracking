@@ -90,8 +90,10 @@ class Application(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     job_id = Column(Integer, ForeignKey("jobs.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     date_sent = Column(Date)
     contact = Column(String)
+    contact_address = Column(String)
     response = Column(Enum(ApplicationResponseEnum))
     next_action_date = Column(Date)
     notes = Column(Text)
@@ -101,6 +103,7 @@ class Application(Base):
 
     # Relationships
     job = relationship("Job", back_populates="applications")
+    users = relationship("User", back_populates="applications")
     artifacts = relationship("Artifact", back_populates="applications", lazy="selectin", cascade="all, delete-orphan")
 
 
@@ -163,3 +166,15 @@ artifact_sections = Table(
     Column("section_id", Integer, ForeignKey("sections.id"), primary_key=True),
     Column("section_order", Integer, nullable=False, server_default="1"),
 )
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    full_name = Column(String, nullable=False)
+    addresss = Column(String)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    applications = relationship("Application", back_populates="users", lazy="selectin", cascade="all, delete-orphan")

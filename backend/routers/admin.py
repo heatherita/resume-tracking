@@ -1,7 +1,7 @@
 from typing import List, Optional
-from services.database_service import get_target_order
+from services.database_service import get_target_order, get_user_by_username
 from database import get_db
-from models.models import Role, Job, Application, Artifact, ArtifactMetric, Section, artifact_sections
+from models.models import Role, Job, Application, Artifact, ArtifactMetric, Section, User, artifact_sections
 from schemas.schemas import (
     ArtifactMetricOut,
     RoleOut,
@@ -23,6 +23,7 @@ from schemas.schemas import (
     SectionOut,
     ArtifactSectionAttach,
     ArtifactSectionOut,
+    UserBase,
 )
 import logging
 from fastapi import APIRouter, Depends, HTTPException
@@ -417,8 +418,30 @@ async def create_application(application: ApplicationCreate, db: Session = Depen
     job = db.query(Job).filter(Job.id == application.job_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-    
-    db_application = Application(**application.dict())
+
+    # Temporary fallback user until auth is wired in.
+    user_id = application.user_id
+    if user_id is None:
+        fallback_user = get_user_by_username("heather", db)
+        if not fallback_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        user_id = fallback_user.id
+    else:
+        existing_user = db.query(User).filter(User.id == user_id).first()
+        if not existing_user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+    # Explicit schema -> ORM mapping.
+    db_application = Application(
+        job_id=application.job_id,
+        user_id=user_id,
+        date_sent=application.date_sent,
+        contact=application.contact,
+        response=application.response,
+        next_action_date=application.next_action_date,
+        notes=application.notes,
+        active=application.active,
+    )
     db.add(db_application)
     db.commit()
     db.refresh(db_application)
@@ -439,7 +462,7 @@ async def get_application(application_id: int, db: Session = Depends(get_db)):
     return application
 
 
-@router.put("/applications/{application_id}", response_model=ApplicationOut, tags=["applications"])
+@router.get("/applications/{application_id}", response_model=ApplicationOut, tags=["applications"])
 async def update_application(application_id: int, application: ApplicationUpdate, db: Session = Depends(get_db)):
     db_application = db.query(Application).filter(Application.id == application_id).first()
     if not db_application:
@@ -463,3 +486,12 @@ async def delete_application(application_id: int, db: Session = Depends(get_db))
     db.delete(application)
     db.commit()
     return {"message": "Application deleted successfully"}
+
+
+@router.post("/users/create", tags=["users"])
+async def create_user(user:UserBase, db: Session = Depends(get_db)):
+    db_user = User(**user.dict())
+    db.add(db_user)    
+    db.commit()
+    db.refresh(db_user)
+    return {"message": "User created successfully", "user_id": db_user.id}

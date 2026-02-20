@@ -1,0 +1,70 @@
+\documentclass[
+$if(fontsize)$
+  $fontsize$,
+$endif$
+  letterpaper
+]{article}
+
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp}
+  \usepackage{lmodern}
+\else
+  \usepackage{fontspec}
+  \defaultfontfeatures{Ligatures=TeX}
+$if(mainfont)$
+  \setmainfont{$mainfont$}
+$endif$
+$if(sansfont)$
+  \setsansfont{$sansfont$}
+$endif$
+$if(monofont)$
+  \setmonofont{$monofont$}
+$endif$
+\fi
+
+\usepackage[margin=0.75in]{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}
+}
+
+\setlength{\emergencystretch}{3em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
+\setcounter{secnumdepth}{-\maxdimen}
+
+\definecolor{ResumeH2}{HTML}{000000}
+
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {-1.2ex \@plus -0.5ex \@minus -.2ex}%
+  {0.8ex \@plus .2ex}%
+  {\normalfont\bfseries\sffamily\fontsize{24}{26}\selectfont}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+  {2.2ex \@plus .6ex \@minus .3ex}%
+  {0.9ex \@plus .3ex}%
+  {\normalfont\bfseries\sffamily\fontsize{13}{15}\selectfont\color{ResumeH2}}}
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+  {1.0ex \@plus .3ex \@minus .2ex}%
+  {1.4ex \@plus .4ex}%
+  {\normalfont\sffamily\fontsize{13}{15}\selectfont\color{ResumeH2}\raggedleft}}
+\makeatother
+
+\renewcommand\labelitemi{\textbullet}
+
+\AtBeginDocument{
+  \let\ResumeOldRule\rule
+  \renewcommand{\rule}[2]{\ResumeOldRule{\linewidth}{0.8pt}}
+  \providecommand{\tightlist}{%
+    \setlength{\itemsep}{0.2em}%
+    \setlength{\parskip}{0pt}}
+}
+
+\begin{document}
+$body$
+\end{document}

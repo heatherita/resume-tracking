@@ -4,6 +4,9 @@ from typing import Optional
 from enum import Enum
 
 
+
+
+
 class LaneEnum(str, Enum):
     software_engineering = "software_engineering"
     devops = "devops"
@@ -57,6 +60,14 @@ class SectionTypeEnum(str, Enum):
     header = "header"
     text = "text"
     bullets = "bullets"
+
+class UserBase(BaseModel):
+    username: str
+    email: str
+    full_name: str
+    address: Optional[str] = Field(default="n/a")
+    is_active: bool = True
+    model_config = {"from_attributes": True}
 
 
 # Role Schemas
@@ -130,6 +141,7 @@ class JobOut(JobBase):
 # Application Schemas
 class ApplicationBase(BaseModel):
     job_id: int
+    user_id: Optional[int] = None
     date_sent: Optional[date] = None
     contact: Optional[str] = None
     response: Optional[ApplicationResponseEnum] = None
@@ -154,6 +166,7 @@ class ApplicationUpdate(BaseModel):
 class ApplicationOut(ApplicationBase):
     id: int
     job: Optional[JobOut] = None
+    users: Optional[UserBase] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 

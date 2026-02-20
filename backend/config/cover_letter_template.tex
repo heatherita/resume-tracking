@@ -1,0 +1,68 @@
+\documentclass[
+$if(fontsize)$
+  $fontsize$,
+$endif$
+  letterpaper
+]{article}
+
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp}
+  \usepackage{lmodern}
+\else
+  \usepackage{fontspec}
+  \defaultfontfeatures{Ligatures=TeX}
+$if(mainfont)$
+  \setmainfont{$mainfont$}
+$endif$
+$if(sansfont)$
+  \setsansfont{$sansfont$}
+$endif$
+$if(monofont)$
+  \setmonofont{$monofont$}
+$endif$
+\fi
+
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.9em}
+\setlength{\emergencystretch}{3em}
+
+\begin{document}
+\raggedright
+
+$senderAddress$
+
+\vspace{1em}
+
+$date$
+
+\vspace{1em}
+
+$recipientAddress$
+
+\vspace{1em}
+
+$greeting$
+
+\vspace{0.5em}
+
+$body$
+
+\vspace{1em}
+
+$closing$
+
+\vspace{1.5em}
+
+$if(sender_name)$$sender_name$$endif$
+
+\end{document}

@@ -15,6 +15,7 @@ const initialForm = {
   job_id: '',
   date_sent: '',
   contact: '',
+  contact_address: '',
   response: '',
   next_action_date: '',
   notes: '',
@@ -85,6 +86,7 @@ function ApplicationSection() {
       job_id: application.job_id ?? '',
       date_sent: toInputDate(application.date_sent),
       contact: application.contact || '',
+      contact_address: application.contact_address || '',
       response: application.response || '',
       next_action_date: toInputDate(application.next_action_date),
       notes: application.notes || '',
@@ -99,6 +101,7 @@ function ApplicationSection() {
       job_id: Number(formData.job_id),
       date_sent: formData.date_sent ? new Date(formData.date_sent).toISOString() : null,
       contact: formData.contact || null,
+      contact_address: formData.contact_address || null,
       response: formData.response || null,
       next_action_date: formData.next_action_date || null,
       notes: formData.notes || null,
@@ -166,6 +169,10 @@ function ApplicationSection() {
           <label>
             Contact
             <input name="contact" value={formData.contact} onChange={handleChange} />
+          </label>
+          <label>
+            Contact Address
+            <input name="contact_address" value={formData.contact_address} onChange={handleChange} />
           </label>
           <label>
             Response

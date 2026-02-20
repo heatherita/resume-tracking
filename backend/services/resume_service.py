@@ -20,6 +20,7 @@ def load_yaml(path: Path) -> dict[str, Any]:
 
 
 def norm_tags(tags: Any) -> set[str]:
+    logger.debug(f"Normalizing tags: {tags}")
     if tags is None:
         return set()
     if isinstance(tags, str):
@@ -36,6 +37,7 @@ def bullet_included(
     mode: str,
 ) -> bool:
     # Exclude always wins
+    logger.info(f"Checking bullet with tags {bullet_tags} against include={include}, exclude={exclude}, mode={mode}")
     if exclude and (bullet_tags & exclude):
         return False
 
@@ -228,6 +230,7 @@ def render_education(data: dict[str, Any]) -> str:
 
 
 def build_md(data: dict[str, Any], include: set[str], exclude: set[str], mode: str) -> str:
+    logger.info(f"Building markdown with include={include}, exclude={exclude}, mode={mode}")
     parts = [
         render_header(data),
         render_summary(data, include, exclude, mode),
@@ -255,10 +258,10 @@ def create_odt_from_md():
     subprocess.run(cmd, check=True)
 
 
-def create_pdf_from_md(pdf_engine: str = "tectonic"):
+def create_resume_pdf_from_md(pdf_engine: str = "tectonic"):
     md_path = Path(BASE_STORAGE_PATH) / "resume.md"
     pdf_path = Path(BASE_STORAGE_PATH) / "resume.pdf"
-    template_path = Path(__file__).resolve().parents[1] / "config" / "resume-template.tex"
+    template_path = Path(__file__).resolve().parents[1] / "config" / "resume_template.tex"
     cmd = [
         "pandoc",
         str(md_path),
