@@ -65,10 +65,21 @@ class UserBase(BaseModel):
     username: str
     email: str
     full_name: str
-    address: Optional[str] = Field(default="n/a")
+    address: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    postal_code: Optional[str] = None
     is_active: bool = True
     model_config = {"from_attributes": True}
 
+    
+class UserOut(UserBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
 
 # Role Schemas
 class RoleBase(BaseModel):

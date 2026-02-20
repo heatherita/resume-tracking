@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createMetric, deleteMetric, listMetricsForArtifact, updateMetric } from '../api/metrics';
+import { listArtifacts } from '../api/artifacts';
 import { formatDateTime } from './dateUtils';
 
 const FONT_OPTIONS = [
@@ -38,6 +39,7 @@ const initialForm = {
 
 function MetricSection() {
   const [metrics, setMetrics] = useState([]);
+  const [artifacts, setArtifacts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState(initialForm);
@@ -62,9 +64,31 @@ function MetricSection() {
     }
   };
 
+  const fetchArtifacts = async () => {
+    setError('');
+    try {
+      const data = await listArtifacts();
+      setArtifacts(data);
+    } catch (err) {
+      setError('Failed to load artifacts.');
+      console.error(err);
+    }
+  };
+
+  const getArtifactLabel = (artifactId) => {
+    const artifact = artifacts.find((item) => item.id === Number(artifactId));
+    if (!artifact) return `Artifact ID ${artifactId}`;
+    const version = artifact.version_name ? ` - ${artifact.version_name}` : '';
+    return `${artifact.type}${version} (ID ${artifact.id})`;
+  };
+
   useEffect(() => {
     fetchMetrics(filterArtifactId);
   }, [filterArtifactId]);
+
+  useEffect(() => {
+    fetchArtifacts();
+  }, []);
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -148,14 +172,18 @@ function MetricSection() {
         <h2>Artifact Metrics</h2>
         <div className="filter">
           <label>
-            Artifact ID
-            <input
-              type="number"
-              min="1"
+            Filter by Artifact
+            <select
               value={filterArtifactId}
               onChange={(event) => setFilterArtifactId(event.target.value)}
-              placeholder="Filter by artifact"
-            />
+            >
+              <option value="">Select an artifact</option>
+              {artifacts.map((artifact) => (
+                <option key={artifact.id} value={artifact.id}>
+                  {getArtifactLabel(artifact.id)}
+                </option>
+              ))}
+            </select>
           </label>
         </div>
       </div>
@@ -164,15 +192,20 @@ function MetricSection() {
         <form className="card" onSubmit={handleSubmit}>
           <h3>{editingId ? 'Edit Metric' : 'Create Metric'}</h3>
           <label>
-            Artifact ID
-            <input
-              type="number"
+            Artifact
+            <select
               name="artifact_id"
               value={formData.artifact_id}
               onChange={handleChange}
-              min="1"
               required
-            />
+            >
+              <option value="">Select an artifact</option>
+              {artifacts.map((artifact) => (
+                <option key={artifact.id} value={artifact.id}>
+                  {getArtifactLabel(artifact.id)}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
             Name
@@ -270,6 +303,7 @@ function MetricSection() {
               <thead>
                 <tr>
                   <th>ID</th>
+                  <th>Artifact</th>
                   <th>Name</th>
                   <th>Active</th>
                   <th>AI</th>
@@ -285,6 +319,7 @@ function MetricSection() {
                 {metrics.map((metric) => (
                   <tr key={metric.id}>
                     <td>{metric.id}</td>
+                    <td>{getArtifactLabel(metric.artifact_id)}</td>
                     <td>{metric.name}</td>
                     <td>{metric.active ? 'Yes' : 'No'}</td>
                     <td>{metric.ai_generated ? 'Yes' : 'No'}</td>

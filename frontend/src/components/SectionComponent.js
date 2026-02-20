@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { createSection, deleteSection, listSections, updateSection } from '../api/artifacts';
+import {
+  createSection,
+  deleteSection,
+  listArtifactSections,
+  listArtifacts,
+  listSections,
+  updateSection,
+} from '../api/artifacts';
 
 const SECTION_TYPES = [
   { value: 'header', label: 'Header' },
@@ -15,6 +22,8 @@ const initialForm = {
 
 function SectionComponent() {
   const [sections, setSections] = useState([]);
+  const [artifacts, setArtifacts] = useState([]);
+  const [filterArtifactId, setFilterArtifactId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState(initialForm);
@@ -34,9 +43,50 @@ function SectionComponent() {
     }
   };
 
+  const fetchArtifacts = async () => {
+    setError('');
+    try {
+      const data = await listArtifacts();
+      setArtifacts(data);
+    } catch (err) {
+      setError('Failed to load artifacts.');
+      console.error(err);
+    }
+  };
+
+  const fetchSectionsForArtifact = async (artifactId) => {
+    if (!artifactId) {
+      fetchSections();
+      return;
+    }
+    setLoading(true);
+    setError('');
+    try {
+      const data = await listArtifactSections(artifactId);
+      setSections(data);
+    } catch (err) {
+      setError('Failed to load sections for artifact.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getArtifactLabel = (artifactId) => {
+    const artifact = artifacts.find((item) => item.id === Number(artifactId));
+    if (!artifact) return `Artifact ID ${artifactId}`;
+    const version = artifact.version_name ? ` - ${artifact.version_name}` : '';
+    return `${artifact.type}${version} (ID ${artifact.id})`;
+  };
+
   useEffect(() => {
     fetchSections();
+    fetchArtifacts();
   }, []);
+
+  useEffect(() => {
+    fetchSectionsForArtifact(filterArtifactId);
+  }, [filterArtifactId]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -99,9 +149,27 @@ function SectionComponent() {
     <section className="section">
       <div className="section-header">
         <h2>Sections</h2>
-        <button type="button" className="ghost" onClick={fetchSections} disabled={loading}>
-          Refresh
-        </button>
+        <div className="filter">
+          <label>
+            Filter by Artifact
+            <select value={filterArtifactId} onChange={(event) => setFilterArtifactId(event.target.value)}>
+              <option value="">All sections</option>
+              {artifacts.map((artifact) => (
+                <option key={artifact.id} value={artifact.id}>
+                  {getArtifactLabel(artifact.id)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            className="ghost"
+            onClick={() => (filterArtifactId ? fetchSectionsForArtifact(filterArtifactId) : fetchSections())}
+            disabled={loading}
+          >
+            Refresh
+          </button>
+        </div>
       </div>
       {error && <p className="error">{error}</p>}
       <div className="section-grid">

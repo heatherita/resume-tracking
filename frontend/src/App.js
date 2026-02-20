@@ -6,6 +6,7 @@ import ArtifactSection from './components/ArtifactSection';
 import MetricSection from './components/MetricSection';
 import ApplicationSection from './components/ApplicationSection';
 import SectionComponent from './components/SectionComponent';
+import UserForm from './components/UserForm';
 
 function App() {
   const tabs = useMemo(
@@ -16,6 +17,8 @@ function App() {
       { id: 'artifacts', label: 'Artifacts', content: <ArtifactSection /> },
       { id: 'sections', label: 'Sections', content: <SectionComponent /> },
       { id: 'metrics', label: 'Metrics', content: <MetricSection /> },
+      { id: 'users', label: 'Users', content: <UserForm /> },
+      
     ],
     []
   );

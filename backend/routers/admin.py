@@ -24,6 +24,7 @@ from schemas.schemas import (
     ArtifactSectionAttach,
     ArtifactSectionOut,
     UserBase,
+    UserOut,
 )
 import logging
 from fastapi import APIRouter, Depends, HTTPException
@@ -462,7 +463,7 @@ async def get_application(application_id: int, db: Session = Depends(get_db)):
     return application
 
 
-@router.get("/applications/{application_id}", response_model=ApplicationOut, tags=["applications"])
+@router.put("/applications/{application_id}", response_model=ApplicationOut, tags=["applications"])
 async def update_application(application_id: int, application: ApplicationUpdate, db: Session = Depends(get_db)):
     db_application = db.query(Application).filter(Application.id == application_id).first()
     if not db_application:
@@ -488,10 +489,43 @@ async def delete_application(application_id: int, db: Session = Depends(get_db))
     return {"message": "Application deleted successfully"}
 
 
-@router.post("/users/create", tags=["users"])
+@router.post("/users/create", response_model=UserOut,tags=["users"])
 async def create_user(user:UserBase, db: Session = Depends(get_db)):
     db_user = User(**user.dict())
     db.add(db_user)    
     db.commit()
     db.refresh(db_user)
-    return {"message": "User created successfully", "user_id": db_user.id}
+    logger.info(f"Created user with id {db_user.id} and username {db_user.username}")
+    return db_user
+
+@router.get("/users", response_model=List[UserOut], tags=["users"])    
+async def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = db.query(User).filter(User.is_active == True).offset(skip).limit(limit).all()
+    # return [User.from_orm(user) for user in users]
+    return users
+
+@router.delete("/users/{user_id}", tags=["users"])
+async def delete_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.is_active = False
+    db.add(user)
+    db.commit()
+    return {"message": "User deactivated successfully"} 
+
+@router.put("/users/update/{user_id}", response_model=UserOut, tags=["users"])
+async def update_user(user_id:int, u: UserBase, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    update_data = u.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_user, key, value)
+    
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    logger.info(f"Updated user with id {db_user.id} and username {db_user.username}")
+    return db_user

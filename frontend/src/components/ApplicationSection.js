@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createApplication, deleteApplication, listApplications, updateApplication } from '../api/applications';
 import { listJobs } from '../api/jobs';
+import { listUsers } from '../api/users';
 import { formatDate, toInputDate } from './dateUtils';
 
 const RESPONSE_OPTIONS = [
@@ -13,6 +14,7 @@ const RESPONSE_OPTIONS = [
 
 const initialForm = {
   job_id: '',
+  user_id: '',
   date_sent: '',
   contact: '',
   contact_address: '',
@@ -26,6 +28,7 @@ function ApplicationSection() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [jobs, setJobs] = useState([]);
+  const [users, setUsers] = useState([]);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState(initialForm);
   const [editingId, setEditingId] = useState(null);
@@ -55,17 +58,50 @@ function ApplicationSection() {
     }
   }
 
+  const fetchUsers = async () => {
+    setError('');
+    try {
+      const data = await listUsers();
+      setUsers(data);
+    } catch (err) {
+      // Soft fallback: keep UI usable even if user list endpoint is unavailable.
+      console.error(err);
+      setUsers([]);
+    }
+  };
+
   useEffect(() => {
     fetchApplications();
     fetchJobs();
+    fetchUsers();
   }, []);
 
-
+  useEffect(() => {
+    // If users endpoint is unavailable, infer user choices from loaded applications.
+    if (users.length === 0 && applications.length > 0) {
+      const inferredUsers = applications
+        .map((application) => application.users)
+        .filter(Boolean)
+        .reduce((acc, user) => {
+          if (!acc.some((item) => item.id === user.id)) acc.push(user);
+          return acc;
+        }, []);
+      if (inferredUsers.length > 0) {
+        setUsers(inferredUsers);
+      }
+    }
+  }, [applications, users]);
 
   const getJobTitleById = (jobId) => {
     const job = jobs.find((j) => j.id === jobId);
     return job ? `${job.company} - ${job.title}` : `Job ID ${jobId}`;
   }
+
+  const getUserLabelById = (userId) => {
+    const user = users.find((u) => u.id === userId);
+    if (!user) return `User ID ${userId}`;
+    return user.username || user.full_name || `User ID ${user.id}`;
+  };
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -84,6 +120,7 @@ function ApplicationSection() {
     setEditingId(application.id);
     setFormData({
       job_id: application.job_id ?? '',
+      user_id: application.user_id ?? application.users?.id ?? '',
       date_sent: toInputDate(application.date_sent),
       contact: application.contact || '',
       contact_address: application.contact_address || '',
@@ -99,6 +136,7 @@ function ApplicationSection() {
     setError('');
     const payload = {
       job_id: Number(formData.job_id),
+      user_id: formData.user_id ? Number(formData.user_id) : null,
       date_sent: formData.date_sent ? new Date(formData.date_sent).toISOString() : null,
       contact: formData.contact || null,
       contact_address: formData.contact_address || null,
@@ -153,6 +191,17 @@ function ApplicationSection() {
               {jobs.map((job) => (
                 <option key={job.id} value={job.id}>
                   {getJobTitleById(job.id)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            User
+            <select name="user_id" value={formData.user_id} onChange={handleChange}>
+              <option value="">Select a user</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.username || user.full_name || `User ID ${user.id}`}
                 </option>
               ))}
             </select>
@@ -224,6 +273,7 @@ function ApplicationSection() {
                 <tr>
                   <th>ID</th>
                   <th>Job</th>
+                  <th>User</th>
                   <th>Response</th>
                   <th>Active</th>
                   <th>Date Sent</th>
@@ -236,6 +286,7 @@ function ApplicationSection() {
                   <tr key={application.id}>
                     <td>{application.id}</td>
                     <td>{getJobTitleById(application.job_id)}</td>
+                    <td>{getUserLabelById(application.user_id)}</td>
                     <td>{application.response || '-'}</td>
                     <td>{application.active ? 'Yes' : 'No'}</td>
                     <td>{formatDate(application.date_sent)}</td>

@@ -48,8 +48,8 @@ def create_markdown_cover_letter(c:CoverLetterRequest, db: Session = Depends(get
     cover_letter_path = Path(BASE_STORAGE_PATH) / f"{artifact_name}_{c.application_id}.md"
     cover_letter_path.write_text(md, encoding="utf-8")
     
-@router.get("/cover-letter/create/pdf")
-def create_pdf_cover_letter(application_id: int, db: Session = Depends(get_db)):
-    logger.info(f"Received request to create PDF cover letter for application id {application_id}")
-    create_pdf_from_md(ArtifactTypeEnum.cover_letter, application_id, pdf_engine="tectonic")
+@router.post("/cover-letter/create/pdf")
+def create_pdf_cover_letter(c:CoverLetterRequest, db: Session = Depends(get_db)):
+    logger.info(f"Received request to create PDF cover letter for application id {c.application_id}")
+    create_pdf_from_md(ArtifactTypeEnum.cover_letter, c.application_id, pdf_engine="tectonic")
     
