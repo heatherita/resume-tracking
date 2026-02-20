@@ -1,9 +1,4 @@
-\documentclass[
-$if(fontsize)$
-  $fontsize$,
-$endif$
-  letterpaper
-]{article}
+\documentclass[letterpaper]{article}
 
 \usepackage{iftex}
 \ifPDFTeX
@@ -27,42 +22,46 @@ $endif$
 
 \usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{titlesec}
+\titleformat{\subsubsection}{\normalsize\bfseries}{}{0pt}{}
+\titlespacing*{\subsubsection}{0pt}{0.4em}{0.2em}
+
 \hypersetup{
   hidelinks,
   pdfcreator={LaTeX via pandoc}
 }
 
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.9em}
+\setstretch{1.0}
+\setlength{\parskip}{\baselineskip}
 \setlength{\emergencystretch}{3em}
+
+\newcommand{\lineblock}[1]{%
+  \begingroup
+  \obeylines
+  #1
+  \par
+  \endgroup
+}
 
 \begin{document}
 \raggedright
 
-$senderAddress$
+\lineblock{$senderAddress$}
 
 \vspace{1em}
-
 $date$
-
 \vspace{1em}
 
-$recipientAddress$
+\lineblock{$recipientAddress$}
 
 \vspace{1em}
-
 $greeting$
-
-\vspace{0.5em}
 
 $body$
 
 \vspace{1em}
-
-$closing$
-
-\vspace{1.5em}
-
-$if(sender_name)$$sender_name$$endif$
+\lineblock{$closing$}
 
 \end{document}

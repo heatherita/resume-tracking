@@ -256,6 +256,7 @@ def create_odt_from_md():
     "-o", str(odt_path),
     ]    
     subprocess.run(cmd, check=True)
+    return odt_path
 
 
 def create_resume_pdf_from_md(pdf_engine: str = "tectonic"):
@@ -275,13 +276,6 @@ def create_resume_pdf_from_md(pdf_engine: str = "tectonic"):
         "-o", str(pdf_path),
     ]
     subprocess.run(cmd, check=True)
+    return pdf_path
             
-
-    # def connect_db():
-    #     conn = connect(
-    #         host="127.0.0.1",
-    #         port=5434,`
-    #         user="fastapi_user",`
-    #         password="fastapi_password",
-    #         dbname="fastapi_db"
-    #     )
+    

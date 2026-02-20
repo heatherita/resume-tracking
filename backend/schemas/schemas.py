@@ -69,6 +69,7 @@ class UserBase(BaseModel):
     city: Optional[str] = None
     state: Optional[str] = None
     postal_code: Optional[str] = None
+    phone: Optional[str] = Field(default="", alias="phone_number")
     is_active: bool = True
     model_config = {"from_attributes": True}
 
@@ -155,6 +156,7 @@ class ApplicationBase(BaseModel):
     user_id: Optional[int] = None
     date_sent: Optional[date] = None
     contact: Optional[str] = None
+    contact_address: Optional[str] = None
     response: Optional[ApplicationResponseEnum] = None
     next_action_date: Optional[date] = None
     notes: Optional[str] = None
@@ -169,6 +171,7 @@ class ApplicationUpdate(BaseModel):
     job_id: Optional[int] = None
     date_sent: Optional[date] = None
     contact: Optional[str] = None
+    contact_address: Optional[str] = None
     response: Optional[ApplicationResponseEnum] = None
     next_action_date: Optional[date] = None
     notes: Optional[str] = None
