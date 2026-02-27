@@ -81,7 +81,7 @@ class Job(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
-    role = relationship("Role", back_populates="jobs")
+    role = relationship("Role", back_populates="jobs", lazy="selectin")
     applications = relationship("Application", back_populates="job", lazy="selectin", cascade="all, delete-orphan")
 
 
@@ -102,8 +102,8 @@ class Application(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
-    job = relationship("Job", back_populates="applications")
-    users = relationship("User", back_populates="applications")
+    job = relationship("Job", back_populates="applications",lazy="selectin")
+    users = relationship("User", back_populates="applications", lazy="selectin")
     artifacts = relationship("Artifact", back_populates="applications", lazy="selectin", cascade="all, delete-orphan")
 
 
@@ -124,7 +124,7 @@ class Artifact(Base):
     # Relationships
     sections = relationship("Section", secondary="artifact_sections", back_populates="artifacts", lazy="selectin")
     metrics = relationship("ArtifactMetric", back_populates="artifact", lazy="selectin", cascade="all, delete-orphan")
-    applications = relationship("Application", back_populates="artifacts")
+    applications = relationship("Application", back_populates="artifacts", lazy="selectin")
     
 class ArtifactMetric(Base):
     __tablename__ = "artifact_metrics"
@@ -144,7 +144,7 @@ class ArtifactMetric(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
-    artifact = relationship("Artifact", back_populates="metrics")
+    artifact = relationship("Artifact", back_populates="metrics", lazy="selectin")
 
 
 class Section(Base):

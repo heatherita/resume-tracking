@@ -21,6 +21,10 @@ from sqlalchemy import select, func, and_
 
 logger = logging.getLogger("jobtelem")
 
+class SafeFormatDict(dict):
+    def __missing__(self, key: str) -> str:
+        return "{" + key + "}"
+
 def build_cover_letter(username: str, application_id: int, db: Session) -> str:
     user = get_user_by_username(username, db)
     if not user:
@@ -76,16 +80,30 @@ def build_cover_letter(username: str, application_id: int, db: Session) -> str:
     recipient_block = "\n".join(line for line in recipient_lines if line)
 
     # Body paragraphs (double newlines between paragraphs)
-    body_paragraphs = [section.content.strip() for section in sections if section.content and section.content.strip()]
+    template_values = SafeFormatDict(
+        company=job.company or "",
+        title=job.title or "",
+        contact=contact or "",
+        contact_address=application.contact_address or "",
+        required_skills=job.required_skills or "",
+        full_name=user.full_name or "",
+        email=user.email or "",
+    )
+    body_paragraphs = [
+        section.content.strip().format_map(template_values)
+        for section in sections
+        if section.content and section.content.strip()
+    ]
 
-    if job.required_skills:
+    if job.required_skills and job.title and job.company:
         body_paragraphs.append(
-            f"In particular, I believe my experience with {job.required_skills} would allow me to make an immediate contribution to your team."
+            f"In particular, I believe my experience with {job.required_skills} would allow me to make an immediate contribution as a {job.title} role at {job.company}."
         )
-    if job.title and job.company:
-        body_paragraphs.append(
-            f"I am confident that my years of experience make me a strong candidate for the {job.title} role at {job.company}."
-        )
+    else:
+        if job.title and job.company:
+            body_paragraphs.append(
+                f"I am confident that my years of experience make me a strong candidate for the {job.title} role at {job.company}."
+            )
 
     closing_block = "\n".join([
         "Sincerely,  ",

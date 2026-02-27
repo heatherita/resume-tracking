@@ -245,30 +245,30 @@ async def delete_section(section_id: int, db: Session = Depends(get_db)):
 
 @router.get("/artifacts/{artifact_id}/sections/", response_model=List[ArtifactSectionOut], tags=["sections"])
 async def get_artifact_sections(artifact_id: int, db: Session = Depends(get_db)):
-    artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
+    artifact = db.get(Artifact, artifact_id)
     if not artifact:
         raise HTTPException(status_code=404, detail="Artifact not found")
-    rows = db.execute(
-        select(
-            Section.id,
-            Section.name,
-            Section.type,
-            Section.content,
-            artifact_sections.c.section_order,
+
+    order_rows = db.execute(
+        select(artifact_sections.c.section_id, artifact_sections.c.section_order).where(
+            artifact_sections.c.artifact_id == artifact_id
         )
-        .join(artifact_sections, artifact_sections.c.section_id == Section.id)
-        .where(artifact_sections.c.artifact_id == artifact_id)
-        .order_by(artifact_sections.c.section_order.asc(), Section.id.asc())
     ).all()
+    section_order_by_id = {row.section_id: row.section_order for row in order_rows}
+    ordered_sections = sorted(
+        artifact.sections,
+        key=lambda section: (section_order_by_id.get(section.id, 0), section.id),
+    )
+
     return [
         ArtifactSectionOut(
-            id=row.id,
-            name=row.name,
-            type=row.type,
-            content=row.content,
-            section_order=row.section_order,
+            id=section.id,
+            name=section.name,
+            type=section.type,
+            content=section.content,
+            section_order=section_order_by_id[section.id],
         )
-        for row in rows
+        for section in ordered_sections
     ]
 
 
@@ -278,7 +278,7 @@ async def create_section_for_artifact(
     section: SectionCreate,
     db: Session = Depends(get_db),
 ):
-    artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
+    artifact = db.get(Artifact, artifact_id)
     if not artifact:
         raise HTTPException(status_code=404, detail="Artifact not found")
 
@@ -313,11 +313,11 @@ async def attach_section_to_artifact(
     attach: Optional[ArtifactSectionAttach] = None,
     db: Session = Depends(get_db),
 ):
-    artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
+    artifact = db.get(Artifact, artifact_id)
     if not artifact:
         raise HTTPException(status_code=404, detail="Artifact not found")
 
-    section = db.query(Section).filter(Section.id == section_id).first()
+    section = db.get(Section, section_id)
     if not section:
         raise HTTPException(status_code=404, detail="Section not found")
 
@@ -345,11 +345,11 @@ async def attach_section_to_artifact(
 
 @router.delete("/artifacts/{artifact_id}/sections/{section_id}", tags=["sections"])
 async def detach_section_from_artifact(artifact_id: int, section_id: int, db: Session = Depends(get_db)):
-    artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
+    artifact = db.get(Artifact, artifact_id)
     if not artifact:
         raise HTTPException(status_code=404, detail="Artifact not found")
 
-    section = db.query(Section).filter(Section.id == section_id).first()
+    section = db.get(Section, section_id)
     if not section:
         raise HTTPException(status_code=404, detail="Section not found")
 
