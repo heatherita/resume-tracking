@@ -13,7 +13,7 @@ const initialForm = {
   is_active: true,
 };
 
-function UserForm() {
+function UserForm({ refreshKey }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, Date, ForeignKey, Enum, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from pydantic import BaseModel
 from database import Base
 import enum
 
@@ -9,6 +10,8 @@ class LaneEnum(str, enum.Enum):
     software_engineering = "software_engineering"
     devops = "devops"
     security = "security"
+    teaching = "teaching"
+    robotics_engineering = "robotics_engineering"
 
 
 class ArtifactTypeEnum(str, enum.Enum):
@@ -40,6 +43,12 @@ class PromptStrictnessEnum(str, enum.Enum):
     low = "low"
     med = "med"
     high = "high"
+    
+class ArtifactFormatDetailsEnum(str, enum.Enum):
+    two_column = "two-column"
+    colors_used = "colors_used"
+    headshot_used = "headshot_used"
+    serif_font = "serif_font"
 
 class FontSizeEnum(str, enum.Enum):
     size_12pt = "12pt"
@@ -49,6 +58,31 @@ class SectionTypeEnum(str, enum.Enum):
     header = "header"
     text = "text"
     bullets = "bullets"
+    
+    
+class LabelOut(BaseModel):
+    lane_labels: dict[str, str]
+    artifact_type_labels: dict[str, str]
+    job_status_labels: dict[str, str]
+    application_response_labels: dict[str, str]
+    section_type_labels: dict[str, str]
+
+    @staticmethod
+    def enum_to_labels(enum_cls):
+        return {
+            item.value: item.value.replace("_", " ").title()
+            for item in enum_cls
+        }
+
+    @classmethod
+    def from_enums(cls):
+        return cls(
+            lane_labels=cls.enum_to_labels(LaneEnum),
+            artifact_type_labels=cls.enum_to_labels(ArtifactTypeEnum),
+            job_status_labels=cls.enum_to_labels(JobStatusEnum),
+            application_response_labels=cls.enum_to_labels(ApplicationResponseEnum),
+            section_type_labels=cls.enum_to_labels(SectionTypeEnum),
+        )
 
 class Role(Base):
     __tablename__ = "roles"

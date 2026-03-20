@@ -1,11 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { createRole, deleteRole, listRoles, updateRole } from '../api/roles';
-
-const LANES = [
-  { value: 'software_engineering', label: 'Software Engineering' },
-  { value: 'devops', label: 'DevOps' },
-  { value: 'security', label: 'Security' },
-];
 
 const initialForm = {
   lane: 'software_engineering',
@@ -13,12 +7,24 @@ const initialForm = {
   notes: '',
 };
 
-function RoleSection() {
+function RoleSection({ refreshKey, laneLabels }) {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState(initialForm);
   const [editingId, setEditingId] = useState(null);
+
+
+  const LANES = useMemo(
+    () =>
+      Object.entries(laneLabels).map(([value, label]) => ({
+        value,
+        label,
+      })),
+    [laneLabels]
+  );
+
+
 
   const fetchRoles = async () => {
     setLoading(true);

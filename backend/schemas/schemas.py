@@ -1,3 +1,4 @@
+from models.models import ApplicationResponseEnum, ArtifactFormatDetailsEnum, ArtifactTypeEnum, FontSizeEnum, JobStatusEnum, LaneEnum, PromptStrictnessEnum, SectionTypeEnum, TruthLevelEnum
 from pydantic import BaseModel, Field
 from datetime import datetime, date
 from typing import Optional
@@ -6,60 +7,6 @@ from enum import Enum
 
 
 
-
-class LaneEnum(str, Enum):
-    software_engineering = "software_engineering"
-    devops = "devops"
-    security = "security"
-
-
-class ArtifactTypeEnum(str, Enum):
-    resume = "resume"
-    cover_letter = "cover_letter"
-
-
-class JobStatusEnum(str, Enum):
-    interested = "interested"
-    applied = "applied"
-    rejected = "rejected"
-    offer = "offer"
-    negotiating = "negotiating"
-
-
-class ApplicationResponseEnum(str, Enum):
-    no_response = "no_response"
-    rejected = "rejected"
-    interview = "interview"
-    offer = "offer"
-
-class TruthLevelEnum(str, Enum):
-    low = "low"
-    med = "med"
-    high = "high"
-
-
-class PromptStrictnessEnum(str, Enum):
-    low = "low"
-    med = "med"
-    high = "high"
-
-
-class FontSizeEnum(str, Enum):
-    size_12pt = "12pt"
-    size_10pt = "10pt"
-
-
-class ArtifactFormatDetailsEnum(str, Enum):
-    two_column = "two-column"
-    colors_used = "colors_used"
-    headshot_used = "headshot_used"
-    serif_font = "serif_font"
-
-
-class SectionTypeEnum(str, Enum):
-    header = "header"
-    text = "text"
-    bullets = "bullets"
 
 class UserBase(BaseModel):
     username: str

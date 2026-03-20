@@ -26,7 +26,7 @@ const initialArtifactForm = {
   application_id: '',
 };
 
-function ArtifactSection() {
+function ArtifactSection({ refreshKey }) {
   const [artifacts, setArtifacts] = useState([]);
   const [sections, setSections] = useState([]);
   const [artifactSections, setArtifactSections] = useState([]);
@@ -229,6 +229,7 @@ function ArtifactSection() {
           type="button"
           className="ghost"
           onClick={() => {
+            fetchApplications();
             fetchArtifacts();
             fetchSections();
           }}

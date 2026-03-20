@@ -1,16 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { createApplication, deleteApplication, listApplications, updateApplication } from '../api/applications';
 import { listJobs } from '../api/jobs';
 import { listUsers } from '../api/users';
 import { formatDate, toInputDate } from './dateUtils';
 
-const RESPONSE_OPTIONS = [
-  { value: '', label: 'None' },
-  { value: 'no_response', label: 'No Response' },
-  { value: 'rejected', label: 'Rejected' },
-  { value: 'interview', label: 'Interview' },
-  { value: 'offer', label: 'Offer' },
-];
 
 const initialForm = {
   job_id: '',
@@ -24,7 +17,7 @@ const initialForm = {
   active: true,
 };
 
-function ApplicationSection() {
+function ApplicationSection({ refreshKey, applicationResponseLabels }) {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [jobs, setJobs] = useState([]);
@@ -32,6 +25,15 @@ function ApplicationSection() {
   const [error, setError] = useState('');
   const [formData, setFormData] = useState(initialForm);
   const [editingId, setEditingId] = useState(null);
+
+  const RESPONSE_OPTIONS = useMemo(
+    () =>
+      Object.entries(applicationResponseLabels).map(([value, label]) => ({
+        value,
+        label,
+      })),
+    [applicationResponseLabels]
+  );
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -176,7 +178,15 @@ function ApplicationSection() {
     <section className="section">
       <div className="section-header">
         <h2>Applications</h2>
-        <button type="button" className="ghost" onClick={fetchApplications} disabled={loading}>
+        <button type="button" className="ghost"
+
+          onClick={() => {
+            fetchApplications();
+            fetchJobs();
+            fetchUsers();
+          }}
+
+          disabled={loading}>
           Refresh
         </button>
       </div>

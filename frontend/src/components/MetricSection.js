@@ -37,7 +37,7 @@ const initialForm = {
   font_size: '',
 };
 
-function MetricSection() {
+function MetricSection({ refreshKey }) {
   const [metrics, setMetrics] = useState([]);
   const [artifacts, setArtifacts] = useState([]);
   const [loading, setLoading] = useState(false);

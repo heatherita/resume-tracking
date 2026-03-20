@@ -1,15 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { createJob, deleteJob, listJobs, updateJob } from '../api/jobs';
 import { listRoles } from '../api/roles';
 import { formatDate, toInputDate } from './dateUtils';
 
-const STATUS_OPTIONS = [
-  { value: 'interested', label: 'Interested' },
-  { value: 'applied', label: 'Applied' },
-  { value: 'rejected', label: 'Rejected' },
-  { value: 'offer', label: 'Offer' },
-  { value: 'negotiating', label: 'Negotiating' },
-];
+
 
 const initialForm = {
   company: '',
@@ -23,13 +17,23 @@ const initialForm = {
   role_id: '',
 };
 
-function JobSection() {
+function JobSection({ refreshKey, jobStatusLabels }) {
   const [jobs, setJobs] = useState([]);
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState(initialForm);
   const [editingId, setEditingId] = useState(null);
+
+
+  const STATUS_OPTIONS = useMemo(
+    () =>
+      Object.entries(jobStatusLabels).map(([value, label]) => ({
+        value,
+        label,
+      })),
+    [jobStatusLabels]
+  );
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -99,6 +103,8 @@ function JobSection() {
     });
   };
 
+  
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');

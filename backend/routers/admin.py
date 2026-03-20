@@ -1,7 +1,8 @@
 from typing import List, Optional
+from services.api_service import enum_to_labels
 from services.database_service import get_target_order, get_user_by_username
 from database import get_db
-from models.models import Role, Job, Application, Artifact, ArtifactMetric, Section, User, artifact_sections
+from models.models import LabelOut, LaneEnum, Role, Job, Application, Artifact, ArtifactMetric, Section, User, artifact_sections
 from schemas.schemas import (
     ArtifactMetricOut,
     RoleOut,
@@ -34,6 +35,18 @@ from sqlalchemy import select, func
 logger = logging.getLogger("jobtelem")
 router = APIRouter()
 
+
+# ===================== CONTEXT =====================
+
+@router.get("/labels/", response_model=LabelOut, tags=["labels"])
+async def get_labels(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    # roles = db.query(Role).offset(skip).limit(limit).all()
+    # return roles
+    return LabelOut.from_enums()
+    
+
+
+# ===================== ROLES =====================
 
 @router.post("/roles/", response_model=RoleOut, tags=["roles"])
 async def create_role(role: RoleCreate, db: Session = Depends(get_db)):

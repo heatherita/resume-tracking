@@ -44,7 +44,7 @@ skills:
     skill: "Java, SQL, Python, PHP, Bash"
     tags: ["java","php","data_analyst","teacher"]
   - header: "DevOps & Platform"
-    skill: "AWS (EC2, S3), Ansible, CI/CD workflows, Git, Docker, Linux"
+    skill: "AWS (EC2, S3), Jenkins, Ansible, CI/CD workflows, Git, Docker, Linux"
     tags: ["java","php","data_analyst","teacher"]
   - header: "Salesforce Platform"
     skill: "Salesforce APIs, Sandbox environments, Enterprise CRM integrations"

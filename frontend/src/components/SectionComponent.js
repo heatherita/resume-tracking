@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   createSection,
   deleteSection,
@@ -8,11 +8,6 @@ import {
   updateSection,
 } from '../api/artifacts';
 
-const SECTION_TYPES = [
-  { value: 'header', label: 'Header' },
-  { value: 'text', label: 'Text' },
-  { value: 'bullets', label: 'Bullets' },
-];
 
 const initialForm = {
   name: '',
@@ -20,7 +15,7 @@ const initialForm = {
   content: '',
 };
 
-function SectionComponent() {
+function SectionComponent({ refreshKey, sectionTypeLabels }) {
   const [sections, setSections] = useState([]);
   const [artifacts, setArtifacts] = useState([]);
   const [filterArtifactId, setFilterArtifactId] = useState('');
@@ -28,6 +23,15 @@ function SectionComponent() {
   const [error, setError] = useState('');
   const [formData, setFormData] = useState(initialForm);
   const [editingId, setEditingId] = useState(null);
+
+  const SECTION_TYPES = useMemo(
+    () =>
+      Object.entries(sectionTypeLabels).map(([value, label]) => ({
+        value,
+        label,
+      })),
+    [sectionTypeLabels]
+  );
 
   const fetchSections = async () => {
     setLoading(true);

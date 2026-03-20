@@ -95,15 +95,15 @@ def build_cover_letter(username: str, application_id: int, db: Session) -> str:
         if section.content and section.content.strip()
     ]
 
-    if job.required_skills and job.title and job.company:
-        body_paragraphs.append(
-            f"In particular, I believe my experience with {job.required_skills} would allow me to make an immediate contribution as a {job.title} role at {job.company}."
-        )
-    else:
-        if job.title and job.company:
-            body_paragraphs.append(
-                f"I am confident that my years of experience make me a strong candidate for the {job.title} role at {job.company}."
-            )
+    # if job.required_skills and job.title and job.company:
+    #     body_paragraphs.append(
+    #         f"In particular, I believe my experience with {job.required_skills} would allow me to make an immediate contribution as a {job.title} role at {job.company}."
+    #     )
+    # else:
+    #     if job.title and job.company:
+    #         body_paragraphs.append(
+    #             f"I am confident that my years of experience make me a strong candidate for the {job.title} role at {job.company}."
+    #         )
 
     closing_block = "\n".join([
         "Sincerely,  ",
